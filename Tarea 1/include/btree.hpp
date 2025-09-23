@@ -1,0 +1,67 @@
+#ifndef B_TREE_HPP
+#define B_TREE_HPP
+
+
+#include <iostream>
+#include <list>
+#include <string>
+using namespace std;
+
+const int b = 340;
+
+/**
+ * @brief Estructura que representa un B Tree en disco
+ * 
+ * - es_interno: Indicador si es un nodo intero o externo
+ * - k: Cantidad de pares llave-valor actualmente contenidas
+ * - llaves_valores: Arreglo tamaño b para pares llave-valor. Los pares estan ordenados de manera ascendente
+ * - hijos: Arreglo de b+1 enteros que guarda las posiciones en disco de los hijos del nodo
+ * - siguiente: Entero solo en hojas de los árboles B+ que indica la posición en disco de la siguiente hoja
+ */
+struct BTreeNode {
+    int es_interno; // 1 si es interno, 0 si es externo
+    int k;
+    std::pair<int, float> llaves_valores[340];
+    int hijos[341];
+    int siguiente;// valor inicial, en los B+ se cambia a su valor real 
+};
+
+/**
+ * @brief Clase que representa un B tree en disco
+ * 
+ * Permite navegar por un B tree guardado en disco
+ */
+class BTree {
+    public:
+        /**
+         * @brief Contruye un Btree apartir de un archivo binario
+         * @param fielname Nombre del archivo que contiene el Btree
+         */
+        BTree(const std::string &filename);
+
+        /**
+         * @brief Realiza el split para un nodo de un árbol B
+         * 
+         * Lee los bytes de la posición dada que corresponden a un nodo lleno (con b pares y b+1 hijos)
+         * y los deserializa para contruir el BTree node en memoria. ??????
+         * Es responsabilidad del usuario asegurarse de que el offset sea válido,
+         * es decir, que exista un nodo en esa posición.
+         * 
+         * @param offset Posición del nodo en el archivo binario
+         * @return Retorna la posición (?) de los 2 nuevos nodos y el par mediano
+         * @throws Termina el programa si no puede abrir el archivo o leer los bytes
+         * del nodo
+         */
+        BTreeNode split(int offset) const;  
+
+    
+    private:
+        std::string filename;
+};
+
+namespace TreeUtils {
+
+};
+
+#endif
+
