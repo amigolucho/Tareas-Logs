@@ -83,7 +83,7 @@ std::vector<std::pair<int, float>> BTree::buscarRango(int l, int u) {
     if (es_mas) {
         return buscarRangoBmas(l,u);
     } else {
-        return buscarRangoB(l,u,)
+        return buscarRangoB(l,u,0); // ojoo en la implementacion hay que garantizar que la raiz siempre este en 0 
     }
 } 
 
