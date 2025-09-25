@@ -6,6 +6,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <vector>
 using namespace std;
 
 const int b = 340;
@@ -64,6 +65,15 @@ class BTree {
          */
         void insert(std::pair<int,float> par, BTreeNode node) const;
 
+        /**
+         * @brief Funcion recursiva para busqueda en B-tree
+         * @param l Limite inferior del rango
+         * @param u limite superior del rango
+         * @param nodo_index Indice del nodo actual
+         * @return Vector con todos los pares encontrados 
+         */
+
+         std::vector<std::pair<int, float>> buscarRango(int l, int u, int nodo_index);
     
     private:
         std::string filename;
