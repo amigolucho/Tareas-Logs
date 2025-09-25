@@ -2,6 +2,7 @@
 #define B_TREE_HPP
 
 
+#include <fstream>
 #include <iostream>
 #include <list>
 #include <string>
@@ -39,6 +40,8 @@ class BTree {
          */
         BTree(const std::string &filename);
 
+        BTreeNode readNode(int offset) const;
+
         /**
          * @brief Realiza el split para un nodo de un árbol B
          * 
@@ -47,21 +50,28 @@ class BTree {
          * Es responsabilidad del usuario asegurarse de que el offset sea válido,
          * es decir, que exista un nodo en esa posición.
          * 
-         * @param offset Posición del nodo en el archivo binario
-         * @return Retorna la posición (?) de los 2 nuevos nodos y el par mediano
+         * @param node Nodo a splitear
+         * @return Retorna los 2 nuevos nodos y el par mediano
          * @throws Termina el programa si no puede abrir el archivo o leer los bytes
          * del nodo
          */
-        BTreeNode split(int offset) const;  
+        std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> split(BTreeNode node) const;  
+
+        /**
+         * @brief Inserta un par llave-valor en un árbol B
+         * 
+         * @param par Par a insertar en el árbol
+         */
+        void insert(std::pair<int,float> par, BTreeNode node) const;
 
     
     private:
         std::string filename;
 };
 
-namespace TreeUtils {
+//namespace TreeUtils {
 
-};
+//};
 
 #endif
 
