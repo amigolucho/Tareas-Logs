@@ -35,6 +35,8 @@ struct BTreeNode {
  */
 class BTree {
     public:
+        bool es_mas; // true para B+Tree, false para B-Tree
+
         /**
          * @brief Contruye un Btree apartir de un archivo binario
          * @param fielname Nombre del archivo que contiene el Btree
@@ -85,7 +87,14 @@ class BTree {
          */
         std::vector<std::pair<int, float>> buscarRangoBmas(int l, int u);
         
-        
+        /**
+         * @brief Buqueda por rango especifica para B-Tree 
+         * @param l Limite inferior
+         * @param u Limite superior
+         * @param nodo_index Indice del nodo donde comenzar la busqueda
+         * @return Vector con pares encontrados
+         */
+        std::vector<std::pair<int, float>> buscarRangoB(int l, int u, int nodo_index);
 
 
 

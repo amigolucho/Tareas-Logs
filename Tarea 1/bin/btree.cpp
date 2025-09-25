@@ -78,3 +78,12 @@ void BTree::insert(std::pair<int,float> par, BTreeNode node) const {
 
     }
 }
+
+std::vector<std::pair<int, float>> BTree::buscarRango(int l, int u) {
+    if (es_mas) {
+        return buscarRangoBmas(l,u);
+    } else {
+        return buscarRangoB(l,u,)
+    }
+} 
+
