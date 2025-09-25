@@ -66,15 +66,29 @@ class BTree {
         void insert(std::pair<int,float> par, BTreeNode node) const;
 
         /**
-         * @brief Funcion recursiva para busqueda en B-tree
-         * @param l Limite inferior del rango
-         * @param u limite superior del rango
-         * @param nodo_index Indice del nodo actual
-         * @return Vector con todos los pares encontrados 
+         * @brief Realiza busqueda por rango en el arbol
+         * @param l Limite inferior del rango (inclusive)
+         * @param u Limite superior del rango (inclusive)
+         * @return Vector con todos los pares (clave, valor) cuyo clave esta en [l, u]
+         * 
+         * Para B-Tree: basqueda recursiva en todos los nodos relevantes
+         * Para B+Tree: busqueda secuencial eficiente usando punteros entre hojas
          */
+        std::vector<std::pair<int, float>> buscarRango(int l, int u);
 
-         std::vector<std::pair<int, float>> buscarRango(int l, int u, int nodo_index);
-    
+
+        /**
+         * @brief Busqueda por rango especifica para B+Tree
+         * @param l Limite inferior
+         * @param u Limite superior
+         * @return Vector de pares encontrados
+         */
+        std::vector<std::pair<int, float>> buscarRangoBmas(int l, int u);
+        
+        
+
+
+
     private:
         std::string filename;
 };
