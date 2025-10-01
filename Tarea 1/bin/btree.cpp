@@ -1,4 +1,6 @@
 #include "../include/btree.hpp"
+#include <vector>
+#include <utility>
 
 //implementación del árbol B
 BTree::BTree(const std::string &filename){
@@ -79,11 +81,99 @@ void BTree::insert(std::pair<int,float> par, BTreeNode node) const {
     }
 }
 
+bool debeBuscarEnHijo(BTreeNode& nodo, int hijo_index, int l, int u) {
+    if (hijo_index == 0) {
+        return l <= nodo.llaves_valores[0].first;
+    } else if (hijo_index == nodo.k) {
+        return u >= nodo.llaves_valores[nodo.k-1].first;
+    } else {
+        return u >= nodo.llaves_valores[hijo_index-1].first && 
+               l <= nodo.llaves_valores[hijo_index].first;
+    }
+}
+
 std::vector<std::pair<int, float>> BTree::buscarRango(int l, int u) {
     if (es_mas) {
         return buscarRangoBmas(l,u);
     } else {
-        return buscarRangoB(l,u,0); // ojoo en la implementacion hay que garantizar que la raiz siempre este en 0 
+
+        // La raíz siempre está en la posición 0
+        return buscarRangoB(l,u,0); 
     }
 } 
 
+std::vector<std::pair<int, float>> BTree::buscarRangoB(int l, int u, int nodo_index) {
+    BTreeNode nodo = readNode(nodo_index);
+    std::vector<std::pair<int, float>> resultados;
+
+    if (nodo.es_interno) {
+
+        //buscar en los pares del nodo interno
+        for (int i = 0; i < nodo.k; i++) {
+            int clave = nodo.llaves_valores[i].first;
+            if (clave >= l && clave <= u) {
+                resultados.push_back(nodo.llaves_valores[i]);
+            }
+        }
+        
+        //Buscar recursivamente en hijos que podrían contener elementos en el rango
+        for (int i = 0; i <= nodo.k; i++) {
+            if (debeBuscarEnHijo(nodo, i, l, u)) {
+                std::vector<std::pair<int, float>> resultados_hijo = buscarRangoB(l, u, nodo.hijos[i]);
+                resultados.insert(resultados.end(), resultados_hijo.begin(), resultados_hijo.end());
+            }
+        }
+    } else {
+
+        //buscar en los pares de este nodo
+        for (int i = 0; i < nodo.k; i++) {
+            int clave = nodo.llaves_valores[i].first;
+            if (clave >= l && clave <= u) {
+                resultados.push_back(nodo.llaves_valores[i]);
+            }
+        }
+    }
+    return resultados;
+}
+
+std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
+    std::vector<std::pair<int, float>> resultados;
+    
+    //Encontrar la hoja donde debería comenzar la búsqueda
+    int nodo_actual = 0;
+    BTreeNode nodo = readNode(nodo_actual);
+    
+
+    while (nodo.es_interno) {
+        int i = 0;
+        // Encontrar el primer hijo cuya llave sea mayor o igual a l
+        while (i < nodo.k && l > nodo.llaves_valores[i].first) {
+            i++;
+        }
+        nodo_actual = nodo.hijos[i];
+        nodo = readNode(nodo_actual);
+    }
+    
+    //Recorrer las hojas
+    bool continuar = true;
+    while (continuar && nodo_actual != -1) {
+        nodo = readNode(nodo_actual);
+        
+        // Buscar en todos los pares de la hoja actual
+        for (int i = 0; i < nodo.k; i++) {
+            int clave = nodo.llaves_valores[i].first;
+            if (clave > u) {
+
+                // Si encontramos una clave mayor a u, podemos terminar
+                continuar = false;
+                break;
+            }
+            if (clave >= l && clave <= u) {
+                resultados.push_back(nodo.llaves_valores[i]);
+            }
+        }
+        // Ir a la siguiente hoja
+        nodo_actual = nodo.siguiente;
+    }
+    return resultados;
+}

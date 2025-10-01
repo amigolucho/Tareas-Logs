@@ -1,14 +1,12 @@
 #ifndef B_TREE_HPP
 #define B_TREE_HPP
-
-
 #include <fstream>
 #include <iostream>
 #include <list>
 #include <string>
 #include <vector>
-using namespace std;
-
+#include <utility>
+using namespace std;  
 const int b = 340;
 
 /**
@@ -35,6 +33,7 @@ struct BTreeNode {
  */
 class BTree {
     public:
+        std::vector<BTreeNode> nodos;
         bool es_mas; // true para B+Tree, false para B-Tree
 
         /**
@@ -95,8 +94,7 @@ class BTree {
          * @return Vector con pares encontrados
          */
         std::vector<std::pair<int, float>> buscarRangoB(int l, int u, int nodo_index);
-
-
+        
 
     private:
         std::string filename;
@@ -107,4 +105,3 @@ class BTree {
 //};
 
 #endif
-
