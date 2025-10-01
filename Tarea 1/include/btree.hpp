@@ -61,9 +61,10 @@ class BTree {
         std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> split(BTreeNode node) const;  
 
         /**
-         * @brief Inserta un par llave-valor en un árbol B
+         * @brief Inserta un par llave-valor en un nodo del árbol B
          * 
-         * @param par Par a insertar en el árbol
+         * @param par Par a insertar en el nodo
+         * @param node nodo donde se está insertando
          */
         void insert(std::pair<int,float> par, BTreeNode node) const;
 
