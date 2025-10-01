@@ -55,14 +55,31 @@ std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTr
 
 void BTree::insert(std::pair<int,float> par, BTreeNode node) const {
     
+    std::pair<int,float> new_value = par; //valor mutable, inicia siendo el par
+    std::pair<int,float> old_value;
+    int value = par.first;
+    
     BTreeNode U;
     
-    if (node.es_interno){
+    if(!node.es_interno){// es una hoja y no raíz
         for(int i=0; i < node.k; i++){
-            if (node.llaves_valores[i-1].second < par.second && par.second <= node.llaves_valores[i].second){
-                U = readNode(node.hijos[i]);
-            }else{
-                U = readNode(node.hijos[i+1]);
+            if (value < node.llaves_valores[i].second){
+                old_value = node.llaves_valores[i];
+                int value = old_value.first;
+                node.llaves_valores[i] = new_value;
+                new_value = old_value;
+            }
+        }
+        node.llaves_valores[node.k] = new_value; //por la forma en que está definida, siempre hará falta reemplazar el último
+        node.k = node.k + 1; //actualizamos k
+        //falta escribir en filename
+    }else if (node.es_interno){ //es interno
+        int pos_U;
+        for(int i=0; i < node.k; i++){
+            if (value <= node.llaves_valores[i].first){ // no es necesario comparar si es mayor a los de i-1, pues si
+                U = readNode(node.hijos[i]);            // salta de la iteración, es por que es mayor
+                pos_U = i; // guardamos la posición
+                break;
             }
         }
         if (U.k == b){// Si está lleno
@@ -73,10 +90,35 @@ void BTree::insert(std::pair<int,float> par, BTreeNode node) const {
 
             std::pair{std::pair{U_i, U_d}, std::pair{k,v}} = split(U);
 
+            // insertar par llave valor, sale mejor hacer una func auxiliar
+            for(int i=0; i < node.k; i++){
+                if (value < node.llaves_valores[i].second){
+                    old_value = node.llaves_valores[i];
+                    int value = old_value.first;
+                    node.llaves_valores[i] = new_value;
+                    new_value = old_value;
+                }
+            }
+            node.llaves_valores[node.k] = new_value; //por la forma en que está definida, siempre hará falta reemplazar el último
+
+            // escribir
+            //node.hijos[node.k] = U_r    como saco la info de U_i
+            //node.hijos[pos_u] = U_i  
+
+            node.k = node.k + 1; // actualizamos la cantidad de elementos de V
+
+            //reescribir V
+
+            // insertar el par en el hijo donde dependa
+            // insert(par, U)
+
+
         }else{ // Si le queda espacio, se inserta ahí
             insert(par, U);
         }
-    }else{
+    }else { // Si es la raíz
+        if(node.k < b){ // no está llena
+        }
 
     }
 }
