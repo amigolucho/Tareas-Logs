@@ -114,10 +114,27 @@ void BTree::insert(std::pair<int,float> par, BTreeNode node) const {
 
 
         }else{ // Si le queda espacio, se inserta ahí
-            insert(par, U);
+            insert(par, U);//hay que insertar en la lista llave valor
         }
     }else { // Si es la raíz
         if(node.k < b){ // no está llena
+            //insertar par en R
+        }else{ //está llena
+            BTreeNode R_i;
+            BTreeNode R_d;
+
+            int k;
+            float v;
+            std::pair{std::pair{R_i, R_d}, std::pair{k,v}} = split(node);
+
+            // escribir en arreglo
+            BTreeNode NewR; //como me aseguro que está vacía?
+            //insert par en NewR
+            //NewR.hijos[0] = R_i
+            //NewR.hijos[1] = R_d
+            //NewR.k = 2
+            // escrbir R
+            // insertar en donde dependa
         }
 
     }
