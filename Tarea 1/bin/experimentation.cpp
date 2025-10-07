@@ -18,7 +18,7 @@ int main(){
    std::ifstream in("../datos.bin", std::ios::binary);
    std::pair<int,float> par;
 
-   for (int i = 0; i<10; i++){
+   for (int i = 0; i<342; i++){
         std::streampos file_offset = i * sizeof(std::pair<int,float>);
         in.seekg(file_offset);
         in.read(reinterpret_cast<char *>(&par), sizeof(std::pair<int,float>));
@@ -26,11 +26,11 @@ int main(){
         BTree.insert(par, node, 0);
    }
 
-   TreeUtils::write_node(filename, node, 0);
+   //TreeUtils::write_node(filename, node, 0);
 
    std::string fileout = "../tree.bin";
-   BTreeNode node2 = TreeUtils::readNode(fileout, 0);
-   std::cout << node2.llaves_valores[339].second << std::endl;
+   BTreeNode node2 = TreeUtils::readNode(fileout, 1);
+   std::cout << "olaaaaa" << node2.llaves_valores[0].second << std::endl;
 
    return 0;
 };
