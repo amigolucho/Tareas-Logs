@@ -2,6 +2,8 @@
 #define B_TREE_HPP
 #include <fstream>
 #include <iostream>
+
+#include <array>
 #include <list>
 #include <string>
 #include <vector>
@@ -21,7 +23,7 @@ const int b = 340;
 struct BTreeNode {
     int es_interno; // 1 si es interno, 0 si es externo
     int k;
-    std::pair<int, float> llaves_valores[340];
+    std::array<std::pair<int, float>, 340> llaves_valores;
     int hijos[341];
     int siguiente;// valor inicial, en los B+ se cambia a su valor real 
 };
@@ -41,8 +43,6 @@ class BTree {
          * @param fielname Nombre del archivo que contiene el Btree
          */
         BTree(const std::string &filename);
-
-        BTreeNode readNode(int offset) const;
 
         /**
          * @brief Realiza el split para un nodo de un árbol B
@@ -64,8 +64,9 @@ class BTree {
          * 
          * @param par Par a insertar en el nodo
          * @param node nodo donde se está insertando
+         * @param indice índice del nodo en el arreglo que representa el árbol en memoria RAM
          */
-        void insert(std::pair<int,float> par, BTreeNode node) const;
+        void insert(std::pair<int,float> par, BTreeNode& node, int indice);
 
         /**
          * @brief Realiza busqueda por rango en el arbol
@@ -101,8 +102,31 @@ class BTree {
         std::string filename;
 };
 
-//namespace TreeUtils {
+namespace TreeUtils {
+    /**
+     * @brief Crea una raíz
+     */
+    BTreeNode crear_raiz();
 
-//};
+    /**
+     * @brief Función que agrega un par llave-valor a la lista de pares llave-valor de un nodo
+     * 
+     * @param par par a insertar
+     * @param node nodo que tiene la lista donde se inserta el par
+     * @return devuelve la lista ya modificada
+     */
+    void agregar_par(const std::pair<int, float> par, BTreeNode& node);
+    
+    /**
+     * @brief Escribe un nodo en disco
+     * 
+     * @param filename Nombre del archivo donde se escribe
+     * @param node Nodo a escribir
+     * @param indice indice del nodo
+     */
+    void write_node(const std::string &filename, const BTreeNode node, int indice);
+
+    BTreeNode readNode(std::string &filename, int offset);
+};
 
 #endif
