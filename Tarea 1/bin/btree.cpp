@@ -38,6 +38,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     
     int value = par.first;
     std::vector<BTreeNode>& arbol = this->nodos;
+    std::cout << "tamano del arbol es " << arbol.size() << std::endl;
 
     if (indice == 0) { // Es la raíz 
         if(node.k < b){ // no está llena
@@ -50,16 +51,16 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             int k;
             float v;
             std::pair{std::pair{R_i, R_d}, std::pair{k,v}} = split(node);
-            std::cout << arbol.size() << std::endl;
+            //std::cout << "tamano del arbol es " << arbol.size() << std::endl;
             // escribir en arreglo ambos nodos
             arbol.push_back(R_i);
             arbol.push_back(R_d);
 
-            BTreeNode NewR = TreeUtils::crear_raiz(); //como me aseguro que está vacía?
+            BTreeNode NewR = TreeUtils::crear_raiz(); 
             TreeUtils::agregar_par(par, NewR); // agregamos el par
 
             int last_pos = arbol.size();
-            std::cout << "el tamaño deberia haber aumentado 2: " << arbol.size() << std::endl;
+            std::cout << "el tamano deberia haber aumentado 2: " << arbol.size() << std::endl;
             NewR.hijos[0] = last_pos-2;
             NewR.hijos[1] = last_pos-1;
             NewR.k = 2;
@@ -86,8 +87,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         std::cout << "Es interno" << std::endl;
         BTreeNode U;
         if(indice == -1){indice = 0;}// Viene desde la raíz
-
-        std::cout << "interno" << std::endl;
+        
         int pos_U;
         for(int i=0; i < node.k; i++){
             if (value <= node.llaves_valores[i].first){ // no es necesario comparar si es mayor a los de i-1, pues si
@@ -124,7 +124,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
                 insert(par, U_d, node.hijos[pos_U + 1]);// Se inserta en la derecha de ser contrario
             }
         }else{ // Si le queda espacio, se inserta ahí
-            insert(par, U, indice);//hay que insertar en la lista llave valor
+            insert(par, U, node.hijos[pos_U]);//hay que insertar en la lista llave valor
         }
     }
 }
@@ -248,25 +248,25 @@ namespace TreeUtils {
                     int value = old_value.first;
                     node.llaves_valores[i] = new_value;
                     new_value = old_value;
-                    std::cout << "se agrego el par; "<< node.llaves_valores[i].first << std::endl;
                 }
             }
 
         node.llaves_valores[node.k] = new_value; //por la forma en que está definida, siempre hará falta reemplazar el último
-        std::cout << "se agrego el par; "<< node.llaves_valores[node.k].first << std::endl;
+        std::cout << "se agrego el par; "<< node.llaves_valores[node.k].second << std::endl;
     }
 
-    void write_node(const std::string &filename, const BTreeNode node){
+    void write_node(const std::string &filename, const BTreeNode node, int indice){
 
         std::ofstream out(filename, std::ios::binary);
-        std::cout << "val1" << std::endl;
         if (!out) {
-            std::cout << "val2" << std::endl;
             std::cerr << "Error al abrir archivo para escritura: " << filename
                       << std::endl;
             std::exit(1);
         }
-        std::cout << "llave 100:" << node.llaves_valores[100].second << std::endl;
+
+        std::streampos file_offset = indice * sizeof(BTreeNode);
+        out.seekp(file_offset);
+        std::cout << "llave 100:" << node.llaves_valores[340].second << std::endl;
         out.write(reinterpret_cast<const char *>(&node), sizeof(node));
         out.close();
    
