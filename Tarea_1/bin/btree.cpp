@@ -1,7 +1,7 @@
 #include "../include/btree.hpp"
-#include <vector>
 #include <iostream>
 #include <utility>
+#include <vector>
 
 //implementación del árbol B
 BTree::BTree(const std::string &filename){
@@ -131,7 +131,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     }
 }
 
-/** bool debeBuscarEnHijo(BTreeNode& nodo, int hijo_index, int l, int u) {
+bool debeBuscarEnHijo(BTreeNode& nodo, int hijo_index, int l, int u) {
     if (hijo_index == 0) {
         return l <= nodo.llaves_valores[0].first;
     } else if (hijo_index == nodo.k) {
@@ -153,7 +153,7 @@ std::vector<std::pair<int, float>> BTree::buscarRango(int l, int u) {
 } 
 
 std::vector<std::pair<int, float>> BTree::buscarRangoB(int l, int u, int nodo_index) {
-    BTreeNode nodo = TreeUtils::readNode(nodo_index);
+    BTreeNode nodo = TreeUtils::readNode(this->filename, nodo_index);
     std::vector<std::pair<int, float>> resultados;
 
     if (nodo.es_interno) {
@@ -191,7 +191,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
     
     //Encontrar la hoja donde debería comenzar la búsqueda
     int nodo_actual = 0;
-    BTreeNode nodo = TreeUtils::readNode(nodo_actual);
+    BTreeNode nodo = TreeUtils::readNode(this->filename, nodo_actual);
     
 
     while (nodo.es_interno) {
@@ -201,14 +201,15 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
             i++;
         }
         nodo_actual = nodo.hijos[i];
-        nodo = TreeUtils::readNode(nodo_actual);
+        nodo = TreeUtils::readNode(this->filename, nodo_actual);
+
     }
     
     //Recorrer las hojas
     bool continuar = true;
     while (continuar && nodo_actual != -1) {
-        nodo = TreeUtils::readNode(nodo_actual);
-        
+        nodo = TreeUtils::readNode(this->filename, nodo_actual);
+
         // Buscar en todos los pares de la hoja actual
         for (int i = 0; i < nodo.k; i++) {
             int clave = nodo.llaves_valores[i].first;
@@ -227,7 +228,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
     }
     return resultados;
 }
-*/
+
 namespace TreeUtils {
     BTreeNode crear_raiz() {
         BTreeNode root;
