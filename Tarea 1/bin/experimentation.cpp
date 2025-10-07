@@ -1,5 +1,6 @@
 #include "./btree.cpp"
 #include <math.h>
+#include <iostream>
 
 int main(){
     // Transformamos la lista en los N correspondientes
@@ -11,25 +12,25 @@ int main(){
     }*/
    const std::string filename = "../tree.bin";
 
-
-
    BTree BTree(filename);
-
-   //std::vector<BTreeNode> BTree;
    BTreeNode node = TreeUtils::crear_raiz();
-   node.es_interno = -1; // es raiz
 
    std::ifstream in("../datos.bin", std::ios::binary);
    std::pair<int,float> par;
 
-   for (int i = 0; i<10; i++){
+   for (int i = 0; i<343; i++){
         std::streampos file_offset = i * sizeof(std::pair<int,float>);
         in.seekg(file_offset);
         in.read(reinterpret_cast<char *>(&par), sizeof(std::pair<int,float>));
+        std::cout << "se agregara; "<< par.first << std::endl;
         BTree.insert(par, node, 0);
    }
 
    TreeUtils::write_node(filename, node);
+
+   std::string fileout = "../tree.bin";
+   BTreeNode node2 = TreeUtils::readNode(fileout, 0);
+   std::cout << node2.llaves_valores[100].first << std::endl;
 
    return 0;
 };

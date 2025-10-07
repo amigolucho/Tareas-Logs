@@ -1,1 +1,1 @@
-BTree.insert(par, node);
+std::cout << node.llaves_valores[4].second << std::endl;

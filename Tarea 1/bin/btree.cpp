@@ -1,31 +1,11 @@
 #include "../include/btree.hpp"
 #include <vector>
+#include <iostream>
 #include <utility>
 
 //implementación del árbol B
 BTree::BTree(const std::string &filename){
     this->filename = filename;
-}
-
-
-BTreeNode BTree::readNode(int offset) const {
-    BTreeNode node;
-    std::ifstream in(filename, std::ios::binary);
-    if (!in.is_open()) {
-        std::cerr << "Error al abrir archivo para lectura" << filename << std::endl;
-        std::exit(1);
-    }
-
-    std::streampos file_offset = offset * sizeof(BTreeNode);
-    in.seekg(file_offset);
-    in.read(reinterpret_cast<char *>(&node), sizeof(BTreeNode));
-
-    if(!in){
-        std::cerr << "Error al leer el nodo en la posición " << offset << std::endl;
-        std::exit(1);  
-    }
-
-    return node;
 }
 
 std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTreeNode node) const {
@@ -63,6 +43,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         if(node.k < b){ // no está llena
             BTree::insert(par, node, -1);
         }else{ //está llena
+            std::cout << "la raiz esta llena" << std::endl;
             BTreeNode R_i;
             BTreeNode R_d;
 
@@ -78,7 +59,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             TreeUtils::agregar_par(par, NewR); // agregamos el par
 
             int last_pos = arbol.size();
-            std::cout << "el tamaño deberia haber aumentado 2" << arbol.size() << std::endl;
+            std::cout << "el tamaño deberia haber aumentado 2: " << arbol.size() << std::endl;
             NewR.hijos[0] = last_pos-2;
             NewR.hijos[1] = last_pos-1;
             NewR.k = 2;
@@ -92,11 +73,17 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         }
 
     }else if(node.es_interno == 0){// es una hoja y no raíz
+        std::cout << "Es hoja" << std::endl;
         TreeUtils::agregar_par(par, node); // Agregamos par a H
         node.k += 1;
-        if(indice == -1){indice = 0;}// Viene desde la raíz
-        arbol.at(indice) = node; // Reescribimos la hoja actualizada
+        if(indice == -1){
+            arbol.push_back(node); // Es la raiz y hay que ponerle el primer elemento
+        }else{
+            std::cout << "validando" << indice << std::endl;
+            arbol.at(indice) = node; // Reescribimos la hoja actualizada
+        }
     }else if (node.es_interno == 1){ //es interno pero no la raíz
+        std::cout << "Es interno" << std::endl;
         BTreeNode U;
         if(indice == -1){indice = 0;}// Viene desde la raíz
 
@@ -142,7 +129,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     }
 }
 
-bool debeBuscarEnHijo(BTreeNode& nodo, int hijo_index, int l, int u) {
+/** bool debeBuscarEnHijo(BTreeNode& nodo, int hijo_index, int l, int u) {
     if (hijo_index == 0) {
         return l <= nodo.llaves_valores[0].first;
     } else if (hijo_index == nodo.k) {
@@ -164,7 +151,7 @@ std::vector<std::pair<int, float>> BTree::buscarRango(int l, int u) {
 } 
 
 std::vector<std::pair<int, float>> BTree::buscarRangoB(int l, int u, int nodo_index) {
-    BTreeNode nodo = readNode(nodo_index);
+    BTreeNode nodo = TreeUtils::readNode(nodo_index);
     std::vector<std::pair<int, float>> resultados;
 
     if (nodo.es_interno) {
@@ -202,7 +189,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
     
     //Encontrar la hoja donde debería comenzar la búsqueda
     int nodo_actual = 0;
-    BTreeNode nodo = readNode(nodo_actual);
+    BTreeNode nodo = TreeUtils::readNode(nodo_actual);
     
 
     while (nodo.es_interno) {
@@ -212,13 +199,13 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
             i++;
         }
         nodo_actual = nodo.hijos[i];
-        nodo = readNode(nodo_actual);
+        nodo = TreeUtils::readNode(nodo_actual);
     }
     
     //Recorrer las hojas
     bool continuar = true;
     while (continuar && nodo_actual != -1) {
-        nodo = readNode(nodo_actual);
+        nodo = TreeUtils::readNode(nodo_actual);
         
         // Buscar en todos los pares de la hoja actual
         for (int i = 0; i < nodo.k; i++) {
@@ -238,20 +225,22 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
     }
     return resultados;
 }
-
+*/
 namespace TreeUtils {
     BTreeNode crear_raiz() {
         BTreeNode root;
         root.k = 0;
+        root.es_interno = 0;// Como es uno recien creado, es un nodo externo
 
         return root;
     }
 
     void agregar_par(const std::pair<int, float> par, BTreeNode& node) {
-        //std::cout << par.first << std::endl;
         std::pair<int,float> new_value = par; //valor mutable, inicia siendo el par
         std::pair<int,float> old_value;
         int value = par.first; 
+
+        std::cout << "este nodo tiene pares; "<< node.k << std::endl;
 
         for(int i=0; i < node.k; i++){
                 if (value < node.llaves_valores[i].second){
@@ -259,11 +248,12 @@ namespace TreeUtils {
                     int value = old_value.first;
                     node.llaves_valores[i] = new_value;
                     new_value = old_value;
+                    std::cout << "se agrego el par; "<< node.llaves_valores[i].first << std::endl;
                 }
             }
 
         node.llaves_valores[node.k] = new_value; //por la forma en que está definida, siempre hará falta reemplazar el último
-        node.k += 1;
+        std::cout << "se agrego el par; "<< node.llaves_valores[node.k].first << std::endl;
     }
 
     void write_node(const std::string &filename, const BTreeNode node){
@@ -276,10 +266,29 @@ namespace TreeUtils {
                       << std::endl;
             std::exit(1);
         }
-        std::cout << "val3" << std::endl;
-        int x = 1234;
-        out.write(reinterpret_cast<const char *>(&x), sizeof(x));
+        std::cout << "llave 100:" << node.llaves_valores[100].second << std::endl;
+        out.write(reinterpret_cast<const char *>(&node), sizeof(node));
         out.close();
    
+    }
+    
+    BTreeNode readNode(std::string &filename, int offset) {
+    BTreeNode node;
+    std::ifstream in(filename, std::ios::binary);
+    if (!in.is_open()) {
+        std::cerr << "Error al abrir archivo para lectura" << filename << std::endl;
+        std::exit(1);
+    }
+
+    std::streampos file_offset = offset * sizeof(BTreeNode);
+    in.seekg(file_offset);
+    in.read(reinterpret_cast<char *>(&node), sizeof(BTreeNode));
+
+    if(!in){
+        std::cerr << "Error al leer el nodo en la posición " << offset << std::endl;
+        std::exit(1);  
+    }
+
+    return node;
     }
 }
