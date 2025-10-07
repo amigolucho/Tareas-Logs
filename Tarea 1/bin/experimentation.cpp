@@ -18,7 +18,7 @@ int main(){
    std::ifstream in("../datos.bin", std::ios::binary);
    std::pair<int,float> par;
 
-   for (int i = 0; i<342; i++){
+   for (int i = 0; i<10; i++){
         std::streampos file_offset = i * sizeof(std::pair<int,float>);
         in.seekg(file_offset);
         in.read(reinterpret_cast<char *>(&par), sizeof(std::pair<int,float>));
@@ -30,7 +30,7 @@ int main(){
 
    std::string fileout = "../tree.bin";
    BTreeNode node2 = TreeUtils::readNode(fileout, 0);
-   std::cout << node2.llaves_valores[340].second << std::endl;
+   std::cout << node2.llaves_valores[339].second << std::endl;
 
    return 0;
 };

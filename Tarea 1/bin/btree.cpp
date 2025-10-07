@@ -38,7 +38,6 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     
     int value = par.first;
     std::vector<BTreeNode>& arbol = this->nodos;
-    std::cout << "tamano del arbol es " << arbol.size() << std::endl;
 
     if (indice == 0) { // Es la raíz 
         if(node.k < b){ // no está llena
@@ -75,7 +74,9 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
 
     }else if(node.es_interno == 0){// es una hoja y no raíz
         std::cout << "Es hoja" << std::endl;
+        std::cout << "tamano del arbol es " << arbol.size() << std::endl;
         TreeUtils::agregar_par(par, node); // Agregamos par a H
+        std::cout << "tamano del arbol es " << arbol.size() << std::endl;
         node.k += 1;
         if(indice == -1){
             arbol.push_back(node); // Es la raiz y hay que ponerle el primer elemento
@@ -83,6 +84,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             std::cout << "validando" << indice << std::endl;
             arbol.at(indice) = node; // Reescribimos la hoja actualizada
         }
+        std::cout << "tamano del arbol es " << arbol.size() << std::endl;
     }else if (node.es_interno == 1){ //es interno pero no la raíz
         std::cout << "Es interno" << std::endl;
         BTreeNode U;
@@ -239,9 +241,6 @@ namespace TreeUtils {
         std::pair<int,float> new_value = par; //valor mutable, inicia siendo el par
         std::pair<int,float> old_value;
         int value = par.first; 
-
-        std::cout << "este nodo tiene pares; "<< node.k << std::endl;
-
         for(int i=0; i < node.k; i++){
                 if (value < node.llaves_valores[i].second){
                     old_value = node.llaves_valores[i];
@@ -266,7 +265,7 @@ namespace TreeUtils {
 
         std::streampos file_offset = indice * sizeof(BTreeNode);
         out.seekp(file_offset);
-        std::cout << "llave 100:" << node.llaves_valores[340].second << std::endl;
+        std::cout << "llave 100:" << node.llaves_valores[339].second << std::endl;
         out.write(reinterpret_cast<const char *>(&node), sizeof(node));
         out.close();
    
