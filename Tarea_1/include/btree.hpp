@@ -36,6 +36,8 @@ struct BTreeNode {
 class BTree {
     public:
         std::vector<BTreeNode> nodos;
+        int escrituras = 0;
+        int lecturas = 0;
         bool es_mas; // true para B+Tree, false para B-Tree
 
         /**
