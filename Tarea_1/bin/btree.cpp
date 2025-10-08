@@ -1,7 +1,7 @@
 #include "../include/btree.hpp"
-#include <vector>
 #include <iostream>
 #include <utility>
+#include <vector>
 
 //implementación del árbol B
 BTree::BTree(const std::string &filename){
