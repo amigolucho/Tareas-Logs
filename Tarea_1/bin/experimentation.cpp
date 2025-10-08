@@ -21,13 +21,6 @@ int main(){
         return 1;
     }
 
-<<<<<<< Updated upstream
-   for (int i = 0; i<10; i++){
-        std::streampos file_offset = i * sizeof(std::pair<int,float>);
-        in.seekg(file_offset);
-        in.read(reinterpret_cast<char *>(&par), sizeof(std::pair<int,float>));
-        std::cout << "se agregara; "<< par.second << std::endl;
-=======
     for (int i = 0; i < 342; i++) {
         int key;
         float value;
@@ -39,7 +32,6 @@ int main(){
 
         std::pair<int,float> par = {key, value};
         std::cout << "Se leerá: {" << key << ", " << value << "}\n";
->>>>>>> Stashed changes
         BTree.insert(par, node, 0);
     }
 

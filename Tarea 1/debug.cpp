@@ -5,7 +5,7 @@
 int main() {
     std::ifstream in("datos.bin", std::ios::binary);
     if (!in.is_open()) {
-        std::cerr << "❌ No se pudo abrir datos.bin\n";
+        std::cerr << " No se pudo abrir datos.bin\n";
         return 1;
     }
 

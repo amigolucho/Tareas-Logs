@@ -6,6 +6,7 @@
 //implementación del árbol B
 BTree::BTree(const std::string &filename){
     this->filename = filename;
+    this->nodos.resize(1);
 }
 
 std::pair<std::pair<BTreeNode, BTreeNode>, std::pair<int,float>> 
@@ -57,39 +58,6 @@ void BTree::insert(const std::pair<int, float>& par, BTreeNode& node, int indice
             auto [hijos, mediana] = split(node);
             auto [left, right] = hijos;
 
-<<<<<<< Updated upstream
-    if (indice == 0) { // Es la raíz 
-        if(node.k < b){ // no está llena
-            BTree::insert(par, node, -1);
-        }else{ //está llena
-            std::cout << "la raiz esta llena" << std::endl;
-            BTreeNode R_i;
-            BTreeNode R_d;
-
-            int k;
-            float v;
-            std::pair{std::pair{R_i, R_d}, std::pair{k,v}} = split(node);
-            //std::cout << "tamano del arbol es " << arbol.size() << std::endl;
-            // escribir en arreglo ambos nodos
-            arbol.push_back(R_i);
-            arbol.push_back(R_d);
-
-            BTreeNode NewR = TreeUtils::crear_raiz(); 
-            TreeUtils::agregar_par(par, NewR); // agregamos el par
-
-            int last_pos = arbol.size();
-            std::cout << "el tamano deberia haber aumentado 2: " << arbol.size() << std::endl;
-            NewR.hijos[0] = last_pos-2;
-            NewR.hijos[1] = last_pos-1;
-            NewR.k = 2;
-            arbol.at(0) = NewR;// Escribimos la nueva raíz
-
-            if (par.first <= k){
-                insert(par, R_i, NewR.hijos[0]);// Se inserta en la izq si es menor o igual
-            }else {
-                insert(par, R_d, NewR.hijos[1]);// Se inserta en la derecha de ser contrario
-            }
-=======
             // Escribir hijos
             this->nodos.push_back(left);
             this->nodos.push_back(right);
@@ -108,7 +76,6 @@ void BTree::insert(const std::pair<int, float>& par, BTreeNode& node, int indice
                 insert(par, this->nodos[new_root.hijos[0]], new_root.hijos[0]);
             else
                 insert(par, this->nodos[new_root.hijos[1]], new_root.hijos[1]);
->>>>>>> Stashed changes
         }
     } else {
         // Nodo interno
@@ -116,42 +83,8 @@ void BTree::insert(const std::pair<int, float>& par, BTreeNode& node, int indice
         while (i < node.k && par.first > node.llaves_valores[i].first)
             i++;
 
-<<<<<<< Updated upstream
-    }else if(node.es_interno == 0){// es una hoja y no raíz
-        std::cout << "Es hoja" << std::endl;
-        std::cout << "tamano del arbol es " << arbol.size() << std::endl;
-        TreeUtils::agregar_par(par, node); // Agregamos par a H
-        std::cout << "tamano del arbol es " << arbol.size() << std::endl;
-        node.k += 1;
-        if(indice == -1){
-            arbol.push_back(node); // Es la raiz y hay que ponerle el primer elemento
-        }else{
-            std::cout << "validando" << indice << std::endl;
-            arbol.at(indice) = node; // Reescribimos la hoja actualizada
-        }
-        std::cout << "tamano del arbol es " << arbol.size() << std::endl;
-    }else if (node.es_interno == 1){ //es interno pero no la raíz
-        std::cout << "Es interno" << std::endl;
-        BTreeNode U;
-        if(indice == -1){indice = 0;}// Viene desde la raíz
-        
-        int pos_U;
-        for(int i=0; i < node.k; i++){
-            if (value <= node.llaves_valores[i].first){ // no es necesario comparar si es mayor a los de i-1, pues si
-                U = arbol.at(node.hijos[i]);            // salta de la iteración, es por que es mayor
-                pos_U = i; // guardamos la posición
-                break;
-            }
-        }
-        if (U.k == b){// Si está lleno
-            BTreeNode U_i;
-            BTreeNode U_d;
-            int k;
-            float v;
-=======
         int hijo_index = node.hijos[i];
         BTreeNode& hijo = this->nodos[hijo_index];
->>>>>>> Stashed changes
 
         if (hijo.k == b) {
             auto [hijos, mediana] = split(hijo);
@@ -204,10 +137,10 @@ std::vector<std::pair<int, float>> BTree::buscarRangoB(int l, int u, int nodo_in
     BTreeNode nodo = TreeUtils::readNode(this->filename, nodo_index);
     std::vector<std::pair<int, float>> resultados;
 
-    if (nodo.es_interno) {
+    if(nodo.es_interno) {
 
         //buscar en los pares del nodo interno
-        for (int i = 0; i < nodo.k; i++) {
+        for(int i = 0; i < nodo.k; i++) {
             int clave = nodo.llaves_valores[i].first;
             if (clave >= l && clave <= u) {
                 resultados.push_back(nodo.llaves_valores[i]);
@@ -215,7 +148,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoB(int l, int u, int nodo_in
         }
         
         //Buscar recursivamente en hijos que podrían contener elementos en el rango
-        for (int i = 0; i <= nodo.k; i++) {
+        for(int i = 0; i <= nodo.k; i++) {
             if (debeBuscarEnHijo(nodo, i, l, u)) {
                 std::vector<std::pair<int, float>> resultados_hijo = buscarRangoB(l, u, nodo.hijos[i]);
                 resultados.insert(resultados.end(), resultados_hijo.begin(), resultados_hijo.end());
@@ -224,7 +157,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoB(int l, int u, int nodo_in
     } else {
 
         //buscar en los pares de este nodo
-        for (int i = 0; i < nodo.k; i++) {
+        for(int i = 0; i < nodo.k; i++) {
             int clave = nodo.llaves_valores[i].first;
             if (clave >= l && clave <= u) {
                 resultados.push_back(nodo.llaves_valores[i]);
@@ -242,7 +175,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
     BTreeNode nodo = TreeUtils::readNode(this->filename, nodo_actual);
     
 
-    while (nodo.es_interno) {
+    while(nodo.es_interno) {
         int i = 0;
         // Encontrar el primer hijo cuya llave sea mayor o igual a l
         while (i < nodo.k && l > nodo.llaves_valores[i].first) {
@@ -255,7 +188,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
     
     //Recorrer las hojas
     bool continuar = true;
-    while (continuar && nodo_actual != -1) {
+    while(continuar && nodo_actual != -1) {
         nodo = TreeUtils::readNode(this->filename, nodo_actual);
 
         // Buscar en todos los pares de la hoja actual
@@ -308,10 +241,6 @@ namespace TreeUtils {
 
         std::streampos file_offset = indice * sizeof(BTreeNode);
         out.seekp(file_offset);
-<<<<<<< Updated upstream
-        std::cout << "llave 100:" << node.llaves_valores[339].second << std::endl;
-        out.write(reinterpret_cast<const char *>(&node), sizeof(node));
-=======
         out.write(reinterpret_cast<const char*>(&node), sizeof(BTreeNode));
 
         if (!out.good()) {
@@ -321,7 +250,6 @@ namespace TreeUtils {
                       << node.k << " claves, es_interno=" << node.es_interno << ")\n";
         }
 
->>>>>>> Stashed changes
         out.close();
     }   
 
@@ -345,4 +273,4 @@ namespace TreeUtils {
 
     return node;
     }
-}
+} 
