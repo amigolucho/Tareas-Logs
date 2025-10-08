@@ -74,7 +74,6 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             NewR.hijos[1] = last_pos-1;
             //std::cout << "Posicin de los hijos " << NewR.hijos[0]<< " " <<NewR.hijos[1] << std::endl;
             //std::cout << "Ks " << arbol.at(0).k << " " << arbol.at(1).k <<  " " << arbol.at(2).k << std::endl;
-            NewR.k = 1;
             NewR.es_interno = 1;// Pasa a ser un nodo interno
             arbol.at(0) = NewR;// Escribimos la nueva raíz
             this->escrituras += 1; // Se escribió la raíz
@@ -90,7 +89,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     }else if(node.es_interno == 0){// es una hoja y no raíz
         //std::cout << "Es hoja y se insertara el par "<< par.second << std::endl;
         TreeUtils::agregar_par(par, node); // Agregamos par a H
-        node.k += 1;
+
         if(indice == -1){
            indice = 0; // Se escribió la raíz
         }
@@ -99,12 +98,13 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         this->escrituras += 1; // Se escribió un nodo
 
     }else if (node.es_interno == 1){ //es interno pero no la raíz
+
         BTreeNode U;
         if(indice == -1){indice = 0;}// Viene desde la raíz
         
         int pos_U = -1;
         //std::cout << "Es interno. Antes de entrar a buscar al hijo donde se inserta, hay k=" << node.k << std::endl;
-        for(int i=0; i <= node.k; i++){
+        for(int i=0; i < node.k; i++){
             if (value <= node.llaves_valores[i].first){ // no es necesario comparar si es mayor a los de i-1, pues si
                 U = arbol.at(node.hijos[i]);            // salta de la iteración, es por que es mayor
                 this->lecturas += 1; // Se lee el hijo U
@@ -112,13 +112,13 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
                 pos_U = i; // guardamos la posición
                 break;
             }
+        }
 
-            if (pos_U = -1){
-                throw std::runtime_error("Error, no encontro al hijo");
-            }
+        if (pos_U == -1){
+            U = arbol.at(node.hijos[node.k]);
+            this->lecturas += 1;
 
-
-            
+            pos_U = node.k;
         }
         //std::cout << "Se encontro que U esta en el arbol en la pos " << node.hijos[pos_U] << " con U.k=" << U.k << std::endl;
         //std::cout << "Se va a insertar donde hay " << arbol.at(node.hijos[pos_U]).k << std::endl;
@@ -128,7 +128,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             int k;
             float v;
 
-            std::pair{std::pair{U_i, U_d}, std::pair{k,v}} = split(U);
+            std::pair{std::pair{U_i, U_d}, std::pair{k,v}} = this->split(U);
 
             // insertar par llave valor
             TreeUtils::agregar_par(std::pair{k,v}, node);
@@ -140,8 +140,6 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
 
             // Agregar indices de hijos
             node.hijos[pos_U + 1] = arbol.size() - 1;
-
-            node.k = node.k + 1; // actualizamos la cantidad de elementos de V
 
             arbol.at(indice) = node;
             this->escrituras += 1; // Reescribimos el nodo padre
@@ -281,6 +279,7 @@ namespace TreeUtils {
             --i;
         }
         node.llaves_valores[i + 1] = par; 
+        node.k ++;
 
     }
 
