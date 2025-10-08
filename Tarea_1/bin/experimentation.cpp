@@ -17,7 +17,7 @@ int main(){
             std::streampos file_offset = i * sizeof(std::pair<int,float>);
             in.seekg(file_offset);
             in.read(reinterpret_cast<char *>(&par), sizeof(std::pair<int,float>));
-            std::cout << "Iteracion N=2^"<< 15+i <<" se inserta el par "<< par.second << " Iteraciones pendientes " << N-j << std::endl;
+            std::cout << "Iteracion N=2^"<< 15+i <<" se inserta el par "<< par.second << " Iteraciones " << j << std::endl;
             BTree.insert(par, node, 0);
         };
 

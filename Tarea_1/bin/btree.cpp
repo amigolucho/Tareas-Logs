@@ -58,7 +58,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
 
             int k;
             float v;
-            std::pair{std::pair{R_i, R_d}, std::pair{k,v}} = split(node);
+            std::pair{std::pair{R_i, R_d}, std::pair{k,v}} = this->split(node);
             
             // escribir en arreglo ambos nodos
             arbol.push_back(R_i);
@@ -67,14 +67,14 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             this->escrituras += 2; // Se escribieron 2 nodos
 
             BTreeNode NewR = TreeUtils::crear_raiz(); 
-            TreeUtils::agregar_par(par, NewR); // agregamos el par
+            TreeUtils::agregar_par({k,v}, NewR); // agregamos el par
 
             int last_pos = arbol.size();
             NewR.hijos[0] = last_pos-2;
             NewR.hijos[1] = last_pos-1;
             //std::cout << "Posicin de los hijos " << NewR.hijos[0]<< " " <<NewR.hijos[1] << std::endl;
             //std::cout << "Ks " << arbol.at(0).k << " " << arbol.at(1).k <<  " " << arbol.at(2).k << std::endl;
-            NewR.k = 2;
+            NewR.k = 1;
             NewR.es_interno = 1;// Pasa a ser un nodo interno
             arbol.at(0) = NewR;// Escribimos la nueva raíz
             this->escrituras += 1; // Se escribió la raíz
