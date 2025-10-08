@@ -8,37 +8,56 @@ BTree::BTree(const std::string &filename){
     this->filename = filename;
 }
 
-std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTreeNode node) const {
+std::pair<std::pair<BTreeNode, BTreeNode>, std::pair<int,float>> 
+BTree::split(const BTreeNode& node) const {
 
-    int par_mediano = b/2;
+    int mid = node.k / 2;
+    std::pair<int, float> median = node.llaves_valores[mid];
 
-    BTreeNode hijo_izq;
-    BTreeNode hijo_der;
+    BTreeNode left, right;
+    left.es_interno = node.es_interno;
+    right.es_interno = node.es_interno;
 
-    hijo_izq.k = par_mediano - 1;
-    hijo_der.k = par_mediano;
-  
-    for (int i=0; i < par_mediano; i++) {
-        hijo_izq.llaves_valores[i] = node.llaves_valores[i];
-        hijo_der.llaves_valores[i] = node.llaves_valores[par_mediano + i];
+    // Copiar llaves y valores a la izquierda
+    for (int i = 0; i < mid; i++) {
+        left.llaves_valores[i] = node.llaves_valores[i];
+    }
+    left.k = mid;
 
+    // Copiar llaves y valores a la derecha (después del mediano)
+    for (int i = mid + 1, j = 0; i < node.k; i++, j++) {
+        right.llaves_valores[j] = node.llaves_valores[i];
+    }
+    right.k = node.k - mid - 1;
+
+    // Copiar punteros hijos si es nodo interno
+    if (node.es_interno) {
+        for (int i = 0; i <= mid; i++)
+            left.hijos[i] = node.hijos[i];
+        for (int i = mid + 1, j = 0; i <= node.k; i++, j++)
+            right.hijos[j] = node.hijos[i];
     }
 
-    if(node.es_interno) {
-        for(int i=0; i < par_mediano; i++) {
-            hijo_izq.hijos[i] = node.hijos[i];
-            hijo_der.hijos[i] = node.hijos[par_mediano + i];
-        }
-        hijo_der.hijos[par_mediano] = node.hijos[b]; // falta agregar el último hijo
-    }
-    return std::pair {std::pair {hijo_izq, hijo_der}, node.llaves_valores[par_mediano]};
+    return {{left, right}, median};
 }
 
-void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
-    
-    int value = par.first;
-    std::vector<BTreeNode>& arbol = this->nodos;
+void BTree::insert(const std::pair<int, float>& par, BTreeNode& node, int indice) {
+    if (node.es_interno == 0) {
+        // Nodo hoja
+        if (node.k < b) {
+            TreeUtils::agregar_par(par, node);
+            node.k++;
+            if (indice >= 0)
+                this->nodos[indice] = node;
+            else
+                this->nodos[0] = node;
+            return;
+        } else {
+            // Dividir hoja llena
+            auto [hijos, mediana] = split(node);
+            auto [left, right] = hijos;
 
+<<<<<<< Updated upstream
     if (indice == 0) { // Es la raíz 
         if(node.k < b){ // no está llena
             BTree::insert(par, node, -1);
@@ -70,8 +89,34 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             }else {
                 insert(par, R_d, NewR.hijos[1]);// Se inserta en la derecha de ser contrario
             }
-        }
+=======
+            // Escribir hijos
+            this->nodos.push_back(left);
+            this->nodos.push_back(right);
 
+            // Nueva raíz
+            BTreeNode new_root = TreeUtils::crear_raiz();
+            new_root.es_interno = 1;
+            new_root.k = 1;
+            new_root.llaves_valores[0] = mediana;
+            new_root.hijos[0] = this->nodos.size() - 2;
+            new_root.hijos[1] = this->nodos.size() - 1;
+            this->nodos[0] = new_root;
+
+            // Insertar el nuevo valor en el hijo correcto
+            if (par.first < mediana.first)
+                insert(par, this->nodos[new_root.hijos[0]], new_root.hijos[0]);
+            else
+                insert(par, this->nodos[new_root.hijos[1]], new_root.hijos[1]);
+>>>>>>> Stashed changes
+        }
+    } else {
+        // Nodo interno
+        int i = 0;
+        while (i < node.k && par.first > node.llaves_valores[i].first)
+            i++;
+
+<<<<<<< Updated upstream
     }else if(node.es_interno == 0){// es una hoja y no raíz
         std::cout << "Es hoja" << std::endl;
         std::cout << "tamano del arbol es " << arbol.size() << std::endl;
@@ -103,33 +148,36 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             BTreeNode U_d;
             int k;
             float v;
+=======
+        int hijo_index = node.hijos[i];
+        BTreeNode& hijo = this->nodos[hijo_index];
+>>>>>>> Stashed changes
 
-            std::pair{std::pair{U_i, U_d}, std::pair{k,v}} = split(U);
+        if (hijo.k == b) {
+            auto [hijos, mediana] = split(hijo);
+            auto [left, right] = hijos;
+            this->nodos[hijo_index] = left;
+            this->nodos.push_back(right);
+            int new_index = this->nodos.size() - 1;
 
-            // insertar par llave valor
-            TreeUtils::agregar_par(std::pair{k,v}, node);
+            // Insertar la mediana en el nodo actual
+            TreeUtils::agregar_par(mediana, node);
+            node.k++;
+            for (int j = node.k; j > i + 1; j--)
+                node.hijos[j] = node.hijos[j - 1];
+            node.hijos[i + 1] = new_index;
 
-            // escribir nodos
-            arbol.push_back(U_d);
-            arbol.at(node.hijos[pos_U]) = U_i; 
-
-            // Agregar indices de hijos
-            node.hijos[pos_U + 1] = arbol.size() - 1;
-
-            node.k = node.k + 1; // actualizamos la cantidad de elementos de V
-
-            arbol.at(indice) = node;
-
-            if (value <= k){
-                insert(par, U_i, node.hijos[pos_U]);// Se inserta en la izq si es menor o igual
-            }else {
-                insert(par, U_d, node.hijos[pos_U + 1]);// Se inserta en la derecha de ser contrario
-            }
-        }else{ // Si le queda espacio, se inserta ahí
-            insert(par, U, node.hijos[pos_U]);//hay que insertar en la lista llave valor
+            // Elegir el hijo adecuado
+            if (par.first < mediana.first)
+                insert(par, this->nodos[hijo_index], hijo_index);
+            else
+                insert(par, this->nodos[new_index], new_index);
+        } else {
+            insert(par, hijo, hijo_index);
         }
     }
 }
+
 
 bool debeBuscarEnHijo(BTreeNode& nodo, int hijo_index, int l, int u) {
     if (hijo_index == 0) {
@@ -239,25 +287,19 @@ namespace TreeUtils {
     }
 
     void agregar_par(const std::pair<int, float> par, BTreeNode& node) {
-        std::pair<int,float> new_value = par; //valor mutable, inicia siendo el par
-        std::pair<int,float> old_value;
-        int value = par.first; 
-        for(int i=0; i < node.k; i++){
-                if (value < node.llaves_valores[i].second){
-                    old_value = node.llaves_valores[i];
-                    int value = old_value.first;
-                    node.llaves_valores[i] = new_value;
-                    new_value = old_value;
-                }
-            }
-
-        node.llaves_valores[node.k] = new_value; //por la forma en que está definida, siempre hará falta reemplazar el último
-        std::cout << "se agrego el par; "<< node.llaves_valores[node.k].second << std::endl;
+        int i = node.k - 1;
+        // Mueve los pares mayores hacia la derecha
+        while (i >= 0 && par.first < node.llaves_valores[i].first) {
+            node.llaves_valores[i + 1] = node.llaves_valores[i];
+            i--;
+        }
+        node.llaves_valores[i + 1] = par;
+        std::cout << "Se agregó el par {" << par.first << ", " << par.second << "}\n";
     }
 
     void write_node(const std::string &filename, const BTreeNode node, int indice){
 
-        std::ofstream out(filename, std::ios::binary);
+        std::ofstream out(filename, std::ios::in | std::ios::out | std::ios::binary);
         if (!out) {
             std::cerr << "Error al abrir archivo para escritura: " << filename
                       << std::endl;
@@ -266,11 +308,23 @@ namespace TreeUtils {
 
         std::streampos file_offset = indice * sizeof(BTreeNode);
         out.seekp(file_offset);
+<<<<<<< Updated upstream
         std::cout << "llave 100:" << node.llaves_valores[339].second << std::endl;
         out.write(reinterpret_cast<const char *>(&node), sizeof(node));
+=======
+        out.write(reinterpret_cast<const char*>(&node), sizeof(BTreeNode));
+
+        if (!out.good()) {
+            std::cerr << "Error al escribir nodo en índice " << indice << std::endl;
+        } else {
+            std::cout << "Nodo " << indice << " escrito correctamente (" 
+                      << node.k << " claves, es_interno=" << node.es_interno << ")\n";
+        }
+
+>>>>>>> Stashed changes
         out.close();
-   
-    }
+    }   
+
     
     BTreeNode readNode(std::string &filename, int offset) {
     BTreeNode node;

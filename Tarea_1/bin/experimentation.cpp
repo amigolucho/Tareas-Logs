@@ -10,21 +10,38 @@ int main(){
             printf("%d\n", j);
         };
     }*/
-   const std::string filename = "../tree.bin";
+   const std::string filename = "../Tarea 1/tree.bin";
 
    BTree BTree(filename);
    BTreeNode node = TreeUtils::crear_raiz();
 
    std::ifstream in("../datos.bin", std::ios::binary);
-   std::pair<int,float> par;
+    if (!in.is_open()) {
+        std::cerr << "No se pudo abrir datos.bin\n";
+        return 1;
+    }
 
+<<<<<<< Updated upstream
    for (int i = 0; i<10; i++){
         std::streampos file_offset = i * sizeof(std::pair<int,float>);
         in.seekg(file_offset);
         in.read(reinterpret_cast<char *>(&par), sizeof(std::pair<int,float>));
         std::cout << "se agregara; "<< par.second << std::endl;
+=======
+    for (int i = 0; i < 342; i++) {
+        int key;
+        float value;
+
+        in.read(reinterpret_cast<char*>(&key), sizeof(int));
+        in.read(reinterpret_cast<char*>(&value), sizeof(float));
+
+        if (!in.good()) break; // por si llega al final
+
+        std::pair<int,float> par = {key, value};
+        std::cout << "Se leerá: {" << key << ", " << value << "}\n";
+>>>>>>> Stashed changes
         BTree.insert(par, node, 0);
-   }
+    }
 
    TreeUtils::write_node(filename, node, 0);
 
