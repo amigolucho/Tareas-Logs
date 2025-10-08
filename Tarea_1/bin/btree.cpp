@@ -16,19 +16,20 @@ std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTr
     BTreeNode hijo_izq;
     BTreeNode hijo_der;
 
-    hijo_izq.k = par_mediano - 1;
-    hijo_der.k = par_mediano;
+    hijo_izq.k = par_mediano;
+    hijo_der.k = par_mediano + 1;
   
     for (int i=0; i < par_mediano; i++) {
         hijo_izq.llaves_valores[i] = node.llaves_valores[i];
-        hijo_der.llaves_valores[i] = node.llaves_valores[par_mediano + i];
-
+        hijo_der.llaves_valores[i] = node.llaves_valores[par_mediano + i + 1];
     }
+    // Por la forma del for, hay que agregar un ultimo elemento al nodo derecho
+    hijo_der.llaves_valores[par_mediano] = node.llaves_valores[b - 1];
 
     if(node.es_interno) {
-        for(int i=0; i < par_mediano; i++) {
+        for(int i=0; i <= par_mediano; i++) {
             hijo_izq.hijos[i] = node.hijos[i];
-            hijo_der.hijos[i] = node.hijos[par_mediano + i];
+            hijo_der.hijos[i] = node.hijos[par_mediano + i + 1];
         }
         hijo_der.hijos[par_mediano] = node.hijos[b]; // falta agregar el último hijo
 
@@ -38,7 +39,7 @@ std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTr
         hijo_izq.es_interno = 0;
         hijo_der.es_interno = 0;// Guardan el mismo tipo del que se separan
     }
-    return std::pair {std::pair {hijo_izq, hijo_der}, node.llaves_valores[par_mediano]};
+    return {{hijo_izq, hijo_der}, node.llaves_valores[par_mediano]};
 }
 
 void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
