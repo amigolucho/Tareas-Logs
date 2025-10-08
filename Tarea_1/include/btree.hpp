@@ -59,7 +59,7 @@ class BTree {
          * @throws Termina el programa si no puede abrir el archivo o leer los bytes
          * del nodo
          */
-        std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> split(BTreeNode node) const;  
+        std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> split(BTreeNode& node) const;  
 
         /**
          * @brief Inserta un par llave-valor en un nodo del árbol B
