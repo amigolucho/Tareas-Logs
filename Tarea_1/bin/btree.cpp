@@ -47,10 +47,9 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     std::vector<BTreeNode>& arbol = this->nodos;
 
     if (indice == 0) { // Es la raíz 
-        //std::cout << "ola" << std::endl;
         if(node.k < b){ // no está llena
             this->insert(par, node, -1);
-            //std::cout << "tamano del arbol luego de insertar en raiz es " << arbol.size() << std::endl;
+            //std::cout << "tinserta en la raiz, hay nodos: " << arbol.size() << std::endl;
         }else{ //está llena
             //std::cout << "la raiz esta llena con k pares = " << node.k << std::endl;
             BTreeNode R_i;
@@ -87,18 +86,17 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         }
 
     }else if(node.es_interno == 0){// es una hoja y no raíz
-        //std::cout << "Es hoja y se insertara el par "<< par.second << std::endl;
-        TreeUtils::agregar_par(par, node); // Agregamos par a H
-
+        std::cout << "Es hoja y hay k pares "<< node.k << std::endl;
         if(indice == -1){
            indice = 0; // Se escribió la raíz
         }
+        TreeUtils::agregar_par(par, node); // Agregamos par a H
         //std::cout << "tamano del arbol luego de insertar es " << arbol.size() << " Y estamos insertando en "<< indice << std::endl;
         arbol.at(indice) = node; // Reescribimos la hoja actualizada
         this->escrituras += 1; // Se escribió un nodo
 
     }else if (node.es_interno == 1){ //es interno pero no la raíz
-
+        std::cout << "Es interno" << std::endl;
         BTreeNode U;
         if(indice == -1){indice = 0;}// Viene desde la raíz
         
@@ -121,7 +119,6 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             pos_U = node.k;
         }
         //std::cout << "Se encontro que U esta en el arbol en la pos " << node.hijos[pos_U] << " con U.k=" << U.k << std::endl;
-        //std::cout << "Se va a insertar donde hay " << arbol.at(node.hijos[pos_U]).k << std::endl;
         if (U.k == b){// Si está lleno
             BTreeNode U_i;
             BTreeNode U_d;
@@ -129,7 +126,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             float v;
 
             std::pair{std::pair{U_i, U_d}, std::pair{k,v}} = this->split(U);
-
+            std::cout << "Hay un split Y LOS HIJOS TIENEN " << U_i.k<< "y" << U_d.k << std::endl;
             // insertar par llave valor
             TreeUtils::agregar_par(std::pair{k,v}, node);
 
