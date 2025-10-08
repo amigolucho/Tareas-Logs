@@ -27,13 +27,13 @@ int main(){
                 std::cerr << "Error al leer par en posición " << file_offset << std::endl;
                 std::exit(1);
             }
-            std::cout << "Iteracion N=2^"<< 15+i <<" se inserta el par "<< par.second << " Iteraciones " << j << std::endl;
+            //std::cout << "Iteracion N=2^"<< 15+i <<" se inserta el par "<< par.second << " Iteraciones " << j << std::endl;
             BTree.insert(par, node, 0);
         };
 
-        std::cout << "Escrituras para N=2^"<< 15+1 << BTree.escrituras << std::endl;
-        std::cout << "Lecturas para N=2^"<< 15+1 << BTree.lecturas << std::endl;
-        std::cout << "Nodos para N=2^"<< 15+1 << BTree.nodos.size() << std::endl;
+        std::cout << "Escrituras para N=2^"<< 15+i << " "<< BTree.escrituras << std::endl;
+        std::cout << "Lecturas para N=2^"<< 15+i << " "<< BTree.lecturas << std::endl;
+        std::cout << "Nodos para N=2^"<< 15+i << " " << BTree.nodos.size() << std::endl;
         
     }
 

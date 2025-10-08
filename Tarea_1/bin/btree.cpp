@@ -39,7 +39,7 @@ std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTr
         hijo_izq.es_interno = 0;
         hijo_der.es_interno = 0;// Guardan el mismo tipo del que se separan
     }
-    std::cout << "El split deja nodos con " << hijo_izq.k<< " y " << hijo_der.k << std::endl;
+    //std::cout << "El split deja nodos con " << hijo_izq.k<< " y " << hijo_der.k << std::endl;
     return {{hijo_izq, hijo_der}, node.llaves_valores[par_mediano]};
 }
 
@@ -48,7 +48,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     std::vector<BTreeNode>& arbol = this->nodos;
 
     if (indice == 0) { // Es la raíz 
-        std::cout << "la raiz tiene k pares "<< node.k << std::endl;
+        //std::cout << "la raiz tiene k pares "<< node.k << std::endl;
         if(node.k < b){ // no está llena
             this->insert(par, node, -1);
             //std::cout << "tinserta en la raiz, hay nodos: " << arbol.size() << std::endl;
@@ -93,7 +93,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         }
 
     }else if(node.es_interno == 0){// es una hoja y no raíz
-        std::cout << "Es hoja y hay k pares "<< node.k << std::endl;
+        //std::cout << "Es hoja y hay k pares "<< node.k << std::endl;
         if(indice == -1){
            indice = 0; // Se escribió la raíz
         }
