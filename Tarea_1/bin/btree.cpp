@@ -9,7 +9,7 @@ BTree::BTree(const std::string &filename){
     this->nodos.resize(1);
 }
 
-std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTreeNode node) const {
+std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> BTree::split(BTreeNode &node) const {
 
     int par_mediano = b/2 - 1;
 
@@ -39,7 +39,8 @@ std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTr
         hijo_izq.es_interno = 0;
         hijo_der.es_interno = 0;// Guardan el mismo tipo del que se separan
     }
-    return {{hijo_izq, hijo_der}, node.llaves_valores[par_mediano]};
+    std::cout << "El split deja nodos con " << hijo_izq.k<< " y " << hijo_der.k << std::endl;
+    return {{&hijo_izq, &hijo_der}, node.llaves_valores[par_mediano]};
 }
 
 void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
@@ -47,6 +48,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     std::vector<BTreeNode>& arbol = this->nodos;
 
     if (indice == 0) { // Es la raíz 
+        std::cout << "la raiz tiene k pares "<< node.k << std::endl;
         if(node.k < b){ // no está llena
             this->insert(par, node, -1);
             //std::cout << "tinserta en la raiz, hay nodos: " << arbol.size() << std::endl;
@@ -57,7 +59,8 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
 
             int k;
             float v;
-            std::pair{std::pair{R_i, R_d}, std::pair{k,v}} = this->split(node);
+            std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> {{&R_i, &R_d}, {k,v}} = this->split(node);
+            std::cout << "Se splitea la raiz, y cada nodo hijo queda con " << R_i.k<< " y " << R_d.k << std::endl;
             
             // escribir en arreglo ambos nodos
             arbol.push_back(R_i);
@@ -125,7 +128,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             int k;
             float v;
 
-            std::pair{std::pair{U_i, U_d}, std::pair{k,v}} = this->split(U);
+            std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> {{&U_i, &U_d}, {k,v}} = this->split(U);
             std::cout << "Hay un split Y LOS HIJOS TIENEN " << U_i.k<< "y" << U_d.k << std::endl;
             // insertar par llave valor
             TreeUtils::agregar_par(std::pair{k,v}, node);
