@@ -268,6 +268,7 @@ std::vector<std::pair<int, float>> BTree::buscarRangoBmas(int l, int u) {
     return resultados;
 }
 
+
 namespace TreeUtils {
     BTreeNode crear_raiz() {
         BTreeNode root;
