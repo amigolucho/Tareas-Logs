@@ -14,7 +14,7 @@ int main(){
     std::exit(1);
   }
 
-    for (int i = 0; i<11; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
+    for (int i = 0; i<1; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
         BTree BTree(filename);
         BTreeNode node = TreeUtils::crear_raiz();
         int N = pow(2, 15 + i);

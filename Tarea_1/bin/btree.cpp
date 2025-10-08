@@ -9,7 +9,7 @@ BTree::BTree(const std::string &filename){
     this->nodos.resize(1);
 }
 
-std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> BTree::split(BTreeNode &node) const {
+std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTreeNode &node) const {
 
     int par_mediano = b/2 - 1;
 
@@ -40,7 +40,7 @@ std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> BTree::split(B
         hijo_der.es_interno = 0;// Guardan el mismo tipo del que se separan
     }
     std::cout << "El split deja nodos con " << hijo_izq.k<< " y " << hijo_der.k << std::endl;
-    return {{&hijo_izq, &hijo_der}, node.llaves_valores[par_mediano]};
+    return {{hijo_izq, hijo_der}, node.llaves_valores[par_mediano]};
 }
 
 void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
@@ -54,13 +54,17 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             //std::cout << "tinserta en la raiz, hay nodos: " << arbol.size() << std::endl;
         }else{ //está llena
             //std::cout << "la raiz esta llena con k pares = " << node.k << std::endl;
-            BTreeNode R_i;
+            /*BTreeNode R_i;
             BTreeNode R_d;
 
             int k;
             float v;
             std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> {{&R_i, &R_d}, {k,v}} = this->split(node);
-            std::cout << "Se splitea la raiz, y cada nodo hijo queda con " << R_i.k<< " y " << R_d.k << std::endl;
+            std::cout << "Se splitea la raiz, y cada nodo hijo queda con " << R_i.k<< " y " << R_d.k << std::endl;*/
+
+            auto [nodos, par_mediano] = this->split(node);
+            auto& [R_i, R_d] = nodos;
+            auto [k, v] = par_mediano;
             
             // escribir en arreglo ambos nodos
             arbol.push_back(R_i);
@@ -82,9 +86,9 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
 
             //std::cout << "el tamano arbol antes de insertar en el hijo " << arbol.size() << std::endl;
             if (value <= k){
-                this->insert(par, R_i, NewR.hijos[0]);// Se inserta en la izq si es menor o igual
+                this->insert(par, arbol.at(NewR.hijos[0]), NewR.hijos[0]);// Se inserta en la izq si es menor o igual
             }else {
-                this->insert(par, R_d, NewR.hijos[1]);// Se inserta en la derecha de ser contrario
+                this->insert(par, arbol.at(NewR.hijos[1]), NewR.hijos[1]);// Se inserta en la derecha de ser contrario
             }
         }
 
@@ -123,14 +127,18 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         }
         //std::cout << "Se encontro que U esta en el arbol en la pos " << node.hijos[pos_U] << " con U.k=" << U.k << std::endl;
         if (U.k == b){// Si está lleno
-            BTreeNode U_i;
+            /*BTreeNode U_i;
             BTreeNode U_d;
             int k;
             float v;
 
             std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> {{&U_i, &U_d}, {k,v}} = this->split(U);
             std::cout << "Hay un split Y LOS HIJOS TIENEN " << U_i.k<< "y" << U_d.k << std::endl;
-            // insertar par llave valor
+            // insertar par llave valor*/
+            auto [nodos, par_mediano] = this->split(node);
+            auto& [U_i, U_d] = nodos;
+            auto [k, v] = par_mediano;
+
             TreeUtils::agregar_par(std::pair{k,v}, node);
 
             // escribir nodos
