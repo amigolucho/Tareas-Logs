@@ -27,6 +27,7 @@ std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTr
     hijo_der.llaves_valores[par_mediano] = node.llaves_valores[b - 1];
 
     if(node.es_interno) {
+        std::cout << "adada" << std::endl;
         for(int i=0; i <= par_mediano; i++) {
             hijo_izq.hijos[i] = node.hijos[i];
             hijo_der.hijos[i] = node.hijos[par_mediano + i + 1];
@@ -135,7 +136,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> {{&U_i, &U_d}, {k,v}} = this->split(U);
             std::cout << "Hay un split Y LOS HIJOS TIENEN " << U_i.k<< "y" << U_d.k << std::endl;
             // insertar par llave valor*/
-            auto [nodos, par_mediano] = this->split(node);
+            auto [nodos, par_mediano] = this->split(U);
             auto& [U_i, U_d] = nodos;
             auto [k, v] = par_mediano;
 
@@ -147,6 +148,9 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             this->escrituras += 2; // Se escribieron 2 nodos
 
             // Agregar indices de hijos
+            for(int i = node.k; i > pos_U; i--){
+                node.hijos[i+1] = node.hijos[i];
+            }
             node.hijos[pos_U + 1] = arbol.size() - 1;
 
             arbol.at(indice) = node;
