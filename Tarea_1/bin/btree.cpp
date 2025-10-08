@@ -44,15 +44,37 @@ std::pair<std::pair<BTreeNode,BTreeNode>, std::pair<int,float>> BTree::split(BTr
     return {{hijo_izq, hijo_der}, node.llaves_valores[par_mediano]};
 }
 
-void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
+void BTree::insert(std::pair<int,float> par, int indice) {
     int value = par.first;
     std::vector<BTreeNode>& arbol = this->nodos;
+    BTreeNode& node = arbol.at(indice);
 
     if (indice == 0) { // Es la raíz 
         //std::cout << "la raiz tiene k pares "<< node.k << std::endl;
         if(node.k < b){ // no está llena
-            this->insert(par, node, -1);
+            //std::cout << node.k << std::endl;
+            //this->insert(par, -1);
             //std::cout << "tinserta en la raiz, hay nodos: " << arbol.size() << std::endl;
+            if (node.es_interno == 0){
+                TreeUtils::agregar_par(par, node);
+                arbol.at(indice) = node;
+                this->escrituras += 1;
+            }else {
+                int pos_U = -1;
+        
+                for(int i=0; i < node.k; i++){
+                    if (value <= node.llaves_valores[i].first){ 
+                    pos_U = i; // guardamos la posición
+                    break;
+                    }}
+
+                if (pos_U == -1){
+                    pos_U = node.k;
+                }
+                this->lecturas += 1; 
+                this->insert(par, node.hijos[pos_U]);
+            }
+            
         }else{ //está llena
             //std::cout << "la raiz esta llena con k pares = " << node.k << std::endl;
             /*BTreeNode R_i;
@@ -87,17 +109,14 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
 
             //std::cout << "el tamano arbol antes de insertar en el hijo " << arbol.size() << std::endl;
             if (value <= k){
-                this->insert(par, arbol.at(NewR.hijos[0]), NewR.hijos[0]);// Se inserta en la izq si es menor o igual
+                this->insert(par, NewR.hijos[0]);// Se inserta en la izq si es menor o igual
             }else {
-                this->insert(par, arbol.at(NewR.hijos[1]), NewR.hijos[1]);// Se inserta en la derecha de ser contrario
+                this->insert(par, NewR.hijos[1]);// Se inserta en la derecha de ser contrario
             }
         }
 
     }else if(node.es_interno == 0){// es una hoja y no raíz
         //std::cout << "Es hoja y hay k pares "<< node.k << std::endl;
-        if(indice == -1){
-           indice = 0; // Se escribió la raíz
-        }
         TreeUtils::agregar_par(par, node); // Agregamos par a H
         //std::cout << "tamano del arbol luego de insertar es " << arbol.size() << " Y estamos insertando en "<< indice << std::endl;
         arbol.at(indice) = node; // Reescribimos la hoja actualizada
@@ -105,27 +124,22 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
 
     }else if (node.es_interno == 1){ //es interno pero no la raíz
         std::cout << "Es interno" << std::endl;
-        BTreeNode U;
-        if(indice == -1){indice = 0;}// Viene desde la raíz
         
         int pos_U = -1;
         //std::cout << "Es interno. Antes de entrar a buscar al hijo donde se inserta, hay k=" << node.k << std::endl;
         for(int i=0; i < node.k; i++){
-            if (value <= node.llaves_valores[i].first){ // no es necesario comparar si es mayor a los de i-1, pues si
-                U = arbol.at(node.hijos[i]);            // salta de la iteración, es por que es mayor
-                this->lecturas += 1; // Se lee el hijo U
-
+            if (value <= node.llaves_valores[i].first){ // no es necesario comparar si es mayor a los de i-1, pues si        
                 pos_U = i; // guardamos la posición
                 break;
             }
         }
 
         if (pos_U == -1){
-            U = arbol.at(node.hijos[node.k]);
-            this->lecturas += 1;
-
             pos_U = node.k;
         }
+        int indice_U = node.hijos[pos_U];
+        BTreeNode& U = arbol.at(indice_U);
+        this->lecturas += 1; 
         //std::cout << "Se encontro que U esta en el arbol en la pos " << node.hijos[pos_U] << " con U.k=" << U.k << std::endl;
         if (U.k == b){// Si está lleno
             /*BTreeNode U_i;
@@ -157,15 +171,15 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             this->escrituras += 1; // Reescribimos el nodo padre
 
             if (value <= k){
-                this->insert(par, U_i, node.hijos[pos_U]);// Se inserta en la izq si es menor o igual
+                this->insert(par, node.hijos[pos_U]);// Se inserta en la izq si es menor o igual
             }else {
-                this->insert(par, U_d, node.hijos[pos_U + 1]);// Se inserta en la derecha de ser contrario
+                this->insert(par, node.hijos[pos_U + 1]);// Se inserta en la derecha de ser contrario
             }
         }else{ // Si le queda espacio, se inserta ahí
             //std::cout << "No esta lleno con pares " << U.k << std::endl;    
             //std::cout << "Se va a insertar " <<par.second<<" donde U va en la pos " <<node.hijos[pos_U] 
             //<<" y es interno? "<< U.es_interno <<std::endl;     
-            this->insert(par, U, node.hijos[pos_U]);//hay que insertar en la lista llave valor
+            this->insert(par, node.hijos[pos_U]);//hay que insertar en la lista llave valor
         }
     }
 }
@@ -279,9 +293,9 @@ namespace TreeUtils {
 
     void agregar_par(const std::pair<int, float> par, BTreeNode& node) {
         if (node.k >= b) {
-        std::cerr << "ERROR: intentar agregar en nodo ya lleno (k=" << node.k << ")\n";
-        std::cerr << "Info del nodo, es interno "<< node.es_interno << ")\n";
-        throw std::runtime_error("Error");
+            std::cerr << "ERROR: intentar agregar en nodo ya lleno (k=" << node.k << ")\n";
+            std::cerr << "Info del nodo, es interno "<< node.es_interno << ")\n";
+            throw std::runtime_error("Error");
         } 
 
         int i = node.k - 1;
