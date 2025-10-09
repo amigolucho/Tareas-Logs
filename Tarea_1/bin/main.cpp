@@ -21,9 +21,6 @@ int main(){
         return 1;
     }
 
-
-
-
     for (int i = 0; i<2; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
         BTree BTree(filename);
         BTreeNode node = TreeUtils::crear_raiz();
@@ -53,9 +50,6 @@ int main(){
     std::cout << "pares totales "<< pares << std::endl;}
 
     archivo.close();
-
-
-   //TreeUtils::write_node(filename, node, 0);
    
 
    return 0;

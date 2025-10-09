@@ -6,7 +6,7 @@
 #include <utility>
 #include <fstream>
 #include <iostream>
-#include "../include/btree.hpp" // para reutilizar BTreeNode y TreeUtils
+#include "../include/btree.hpp" 
 
 class BPlusTree {
 public:
