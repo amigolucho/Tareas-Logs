@@ -1,0 +1,10 @@
+I/Os en arbol B para N=2^15 130056
+Nodos en arbol B para N=2^15 64859
+I/Os en arbol B para N=2^16 261128
+Nodos en arbol B para N=2^16 130395
+I/Os en arbol B para N=2^17 523272
+Nodos en arbol B para N=2^17 261467
+I/Os en arbol B para N=2^18 1047560
+Nodos en arbol B para N=2^18 523611
+I/Os en arbol B para N=2^19 2096136
+Nodos en arbol B para N=2^19 1047899
