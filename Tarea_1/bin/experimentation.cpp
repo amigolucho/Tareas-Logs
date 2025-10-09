@@ -12,9 +12,19 @@ int main(){
     std::cerr << "Error al abrir archivo para lectura: " << "../datos.bin"
               << std::endl;
     std::exit(1);
-  }
+    }
 
-    for (int i = 0; i<1; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
+    // Escribimos nuestros resultados
+    ofstream archivo("../resultado.txt");
+    if (!archivo) {  // siempre conviene verificar que se abrió bien
+        cerr << "Error al abrir el archivo" << endl;
+        return 1;
+    }
+
+
+
+
+    for (int i = 0; i<2; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
         BTree BTree(filename);
         BTreeNode node = TreeUtils::crear_raiz();
         int N = pow(2, 15 + i);
@@ -31,11 +41,18 @@ int main(){
             BTree.insert(par, node, 0);
         };
 
-        std::cout << "Escrituras para N=2^"<< 15+i << " "<< BTree.escrituras << std::endl;
-        std::cout << "Lecturas para N=2^"<< 15+i << " "<< BTree.lecturas << std::endl;
-        std::cout << "Nodos para N=2^"<< 15+i << " " << BTree.nodos.size() << std::endl;
+        archivo << "Escrituras para N=2^"<< 15+i << " "<< BTree.escrituras << std::endl;
+        archivo << "Lecturas para N=2^"<< 15+i << " "<< BTree.lecturas << std::endl;
+        archivo << "Nodos para N=2^"<< 15+i << " " << BTree.nodos.size() << std::endl;
         
+    
+    int pares = 0;
+    for(int i =0; i < BTree.nodos.size(); i++){
+        pares += BTree.nodos.at(i).k;
     }
+    std::cout << "pares totales "<< pares << std::endl;}
+
+    archivo.close();
 
 
    //TreeUtils::write_node(filename, node, 0);
