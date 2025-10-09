@@ -21,10 +21,7 @@ int main(){
         return 1;
     }
 
-
-
-
-    for (int i = 0; i<2; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
+    for (int i = 0; i<11; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
         BTree BTree(filename);
         BTreeNode node = TreeUtils::crear_raiz();
         int N = pow(2, 15 + i);
@@ -41,16 +38,9 @@ int main(){
             BTree.insert(par, node, 0);
         };
 
-        archivo << "Escrituras para N=2^"<< 15+i << " "<< BTree.escrituras << std::endl;
-        archivo << "Lecturas para N=2^"<< 15+i << " "<< BTree.lecturas << std::endl;
-        archivo << "Nodos para N=2^"<< 15+i << " " << BTree.nodos.size() << std::endl;
+        archivo << "I/Os en arbol B para N=2^"<< 15+i << " "<< BTree.escrituras + BTree.lecturas<< std::endl;
+        archivo << "Nodos en arbol B para N=2^"<< 15+i << " " << BTree.nodos.size() << std::endl;
         
-    
-    int pares = 0;
-    for(int i =0; i < BTree.nodos.size(); i++){
-        pares += BTree.nodos.at(i).k;
-    }
-    std::cout << "pares totales "<< pares << std::endl;}
 
     archivo.close();
 
