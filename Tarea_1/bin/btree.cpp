@@ -49,20 +49,9 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
     std::vector<BTreeNode>& arbol = this->nodos;
 
     if (indice == 0) { // Es la raíz 
-        //std::cout << "la raiz tiene k pares "<< node.k << std::endl;
         if(node.k < b){ // no está llena
             this->insert(par, node, -1);
-            //std::cout << "tinserta en la raiz, hay nodos: " << arbol.size() << std::endl;
-        }else{ //está llena
-            //std::cout << "la raiz esta llena con k pares = " << node.k << std::endl;
-            /*BTreeNode R_i;
-            BTreeNode R_d;
-
-            int k;
-            float v;
-            std::pair<std::pair<BTreeNode*,BTreeNode*>, std::pair<int,float>> {{&R_i, &R_d}, {k,v}} = this->split(node);
-            std::cout << "Se splitea la raiz, y cada nodo hijo queda con " << R_i.k<< " y " << R_d.k << std::endl;*/
-
+        }else{ //está llena, se hace split
             auto [nodos, par_mediano] = this->split(node);
             auto& [R_i, R_d] = nodos;
             auto [k, v] = par_mediano;
@@ -74,13 +63,12 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
             this->escrituras += 2; // Se escribieron 2 nodos
 
             BTreeNode NewR = TreeUtils::crear_raiz(); 
-            TreeUtils::agregar_par({k,v}, NewR); // agregamos el par
+            TreeUtils::agregar_par({k,v}, NewR); // agregamos el par ,ediano a la raiz
 
             int last_pos = arbol.size();
             NewR.hijos[0] = last_pos-2;
             NewR.hijos[1] = last_pos-1;
-            //std::cout << "Posicin de los hijos " << NewR.hijos[0]<< " " <<NewR.hijos[1] << std::endl;
-            //std::cout << "Ks " << arbol.at(0).k << " " << arbol.at(1).k <<  " " << arbol.at(2).k << std::endl;
+
             NewR.es_interno = 1;// Pasa a ser un nodo interno
             arbol.at(0) = NewR;// Escribimos la nueva raíz
             this->escrituras += 1; // Se escribió la raíz
@@ -102,6 +90,7 @@ void BTree::insert(std::pair<int,float> par, BTreeNode& node, int indice) {
         //std::cout << "tamano del arbol luego de insertar es " << arbol.size() << " Y estamos insertando en "<< indice << std::endl;
         arbol.at(indice) = node; // Reescribimos la hoja actualizada
         this->escrituras += 1; // Se escribió un nodo
+        return;
 
     }else if (node.es_interno == 1){ //es interno pero no la raíz
         std::cout << "Es interno" << std::endl;
