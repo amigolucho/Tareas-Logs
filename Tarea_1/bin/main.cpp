@@ -1,60 +1,62 @@
-#include "../include/btree.hpp"
+#include "./btree.cpp"
+#include <math.h>
 #include <iostream>
-#include <fstream>
-#include <vector>
-#include <utility>
 
-int main() {
-    const std::string filename = "../tree.bin";  // acá guardará el árbol
-
-    // 1️⃣ Construir el árbol desde datos.bin
-    BTree arbol(filename);
-    BTreeNode raiz = TreeUtils::crear_raiz();
-
+int main(){
+    // Transformamos la lista en los N correspondientes
+    const std::string filename = "../tree.bin";
     std::ifstream in("../datos.bin", std::ios::binary);
+    std::pair<int,float> par;
+
     if (!in.is_open()) {
-        std::cerr << "❌ No se pudo abrir datos.bin\n";
+    std::cerr << "Error al abrir archivo para lectura: " << "../datos.bin"
+              << std::endl;
+    std::exit(1);
+    }
+
+    // Escribimos nuestros resultados
+    ofstream archivo("../resultado.txt");
+    if (!archivo) {  // siempre conviene verificar que se abrió bien
+        cerr << "Error al abrir el archivo" << endl;
         return 1;
     }
 
-    std::pair<int, float> par;
-    int count = 0;
-    while (in.read(reinterpret_cast<char*>(&par), sizeof(par))) {
-        arbol.insert(par, raiz, 0);
-        count++;
+
+
+
+    for (int i = 0; i<2; i++){// testeamos para N 2 ** 15, despues lo vamos alargando (i<=11)
+        BTree BTree(filename);
+        BTreeNode node = TreeUtils::crear_raiz();
+        int N = pow(2, 15 + i);
+
+        for (int j = 0; j <= N; j++){
+            std::streampos file_offset = j * sizeof(std::pair<int,float>);
+            in.seekg(file_offset);
+            in.read(reinterpret_cast<char *>(&par), sizeof(std::pair<int,float>));
+            if (!in) {
+                std::cerr << "Error al leer par en posición " << file_offset << std::endl;
+                std::exit(1);
+            }
+            //std::cout << "Iteracion N=2^"<< 15+i <<" se inserta el par "<< par.second << " Iteraciones " << j << std::endl;
+            BTree.insert(par, node, 0);
+        };
+
+        archivo << "Escrituras para N=2^"<< 15+i << " "<< BTree.escrituras << std::endl;
+        archivo << "Lecturas para N=2^"<< 15+i << " "<< BTree.lecturas << std::endl;
+        archivo << "Nodos para N=2^"<< 15+i << " " << BTree.nodos.size() << std::endl;
+        
+    
+    int pares = 0;
+    for(int i =0; i < BTree.nodos.size(); i++){
+        pares += BTree.nodos.at(i).k;
     }
-    in.close();
-    TreeUtils::write_node(filename, raiz, 0);
+    std::cout << "pares totales "<< pares << std::endl;}
 
-    std::cout << "✅ Árbol B creado con " << count << " pares.\n\n";
+    archivo.close();
 
-    // 2️⃣ Probar tus funciones de búsqueda reales
-    std::vector<std::pair<int, float>> resultados;
 
-    std::cout << "1️⃣ Rango pequeño [1627211543, 1627249463]:\n";
-    resultados = arbol.buscarRango(1627211543, 1627249463);
-    std::cout << "Encontrados: " << resultados.size() << " resultados\n";
-    for (auto &r : resultados)
-        std::cout << r.first << " -> " << r.second << std::endl;
+   //TreeUtils::write_node(filename, node, 0);
+   
 
-    std::cout << "\n2️⃣ Rango medio [1670000000, 1680000000]:\n";
-    resultados = arbol.buscarRango(1670000000, 1680000000);
-    std::cout << "Encontrados: " << resultados.size() << " resultados\n";
-    for (auto &r : resultados)
-        std::cout << r.first << " -> " << r.second << std::endl;
-
-    std::cout << "\n3️⃣ Rango específico [1733426259, 1740499888]:\n";
-    resultados = arbol.buscarRango(1733426259, 1740499888);
-    std::cout << "Encontrados: " << resultados.size() << " resultados\n";
-    for (auto &r : resultados)
-        std::cout << r.first << " -> " << r.second << std::endl;
-
-    std::cout << "\n4️⃣ Búsqueda exacta [1644113316, 1644113316]:\n";
-    resultados = arbol.buscarRango(1644113316, 1644113316);
-    std::cout << "Encontrados: " << resultados.size() << " resultados\n";
-    for (auto &r : resultados)
-        std::cout << r.first << " -> " << r.second << std::endl;
-
-    std::cout << "\n✅ Fin de las pruebas del árbol B.\n";
-    return 0;
-}
+   return 0;
+};
