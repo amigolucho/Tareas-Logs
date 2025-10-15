@@ -43,9 +43,6 @@ int main(){
         
 
     archivo.close();
-
-
-   //TreeUtils::write_node(filename, node, 0);
    
 
    return 0;
