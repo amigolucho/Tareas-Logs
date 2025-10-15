@@ -1,13 +1,11 @@
-#include "include/trie.hpp"
+#include "bin/trie.cpp"
 #include <algorithm>
 
 
 int main(){
-    string a ;
-    const string Sigma = "abcdefghijklmnopqrstuvwxyz$";
+    Trie Trie;
+    Trie.nodes = {nullptr};
+    Trie.insert("SFDdscs");
 
-    for (char i: Sigma){
-        std::cout << i << std::endl;
-    }
-    return 1;
+    return 0;
 };

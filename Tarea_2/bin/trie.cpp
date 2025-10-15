@@ -5,12 +5,14 @@ Trie::Trie(){
 }
 
 void Trie::insert(string w){
+    cout << this->nodes.size() << endl;
     TrieNode* node = &this->nodes.at(0);
     w = w + '$'; 
 
     if (node == NULL){
             // Crea la raíz en caso de no existir
-            node = &TrieNode();
+            TrieNode* Trie;
+            node = Trie;
             node->value = ' ';
         }
     
@@ -20,7 +22,8 @@ void Trie::insert(string w){
 
         if (hijo == NULL){
             // Si no existe el nodo se crea
-            hijo = &TrieNode();
+            TrieNode* Trie;
+            hijo = Trie;
             hijo->parent = node;
         }
         node = hijo;
@@ -35,6 +38,35 @@ TrieNode* Trie::descend(TrieNode* v,char c){
     return v->next.at(index);
 }
 
-TrieNode* autocomplete(Trie v);
+TrieNode* Trie::autocomplete(TrieNode* v){
+    TrieNode* terminal = v->best_terminal;
+    
+    return terminal;
+}
 
-void update_priority(TrieNode* v);
+void Trie::update_priority(TrieNode* v){
+    // Frecuencia
+    //v->priority += 1;
+    // reciente
+    this->timestamp += 1;
+    v->priority = this->timestamp;
+    
+    TrieUtils::update_info(v);
+}
+
+
+namespace TrieUtils {
+    void update_info(TrieNode* v){
+        TrieNode* padre = v->parent;
+        if (padre == NULL){
+            return ;
+        }
+
+        if (padre->best_priority < v->priority){
+            // Si es menor hay que actualizar
+            padre->best_priority = v->priority;
+            padre->best_terminal = v;
+            update_info(padre);
+        }
+    }
+}
