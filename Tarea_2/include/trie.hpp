@@ -24,10 +24,14 @@ using namespace std;
  */
 struct TrieNode {
 
-     int Sigma = 27;
+    char value;
 
-    char next[27];
-
+    TrieNode* parent;
+    std::array<TrieNode*, 27> next;
+    int priority;
+    string* str;
+    TrieNode* best_terminal;
+    int best_priority;
 };
 
 
@@ -36,6 +40,15 @@ struct TrieNode {
  */
 class Trie {
 
+    std::vector<TrieNode> nodes;
+
+    const string Sigma = "abcdefghijklmnopqrstuvwxyz$"; //en particular un string constante es un arreglo de chars (poner e n el readme)
+    string prefix;
+
+    /**
+     * @brief Constructor de un Trie
+     */
+    Trie();
 
     /**
      * @brief inserta una palabra al trie
@@ -44,8 +57,31 @@ class Trie {
      * 
      * @param w palabra a insertar
      */
-    Trie insert(string w){
+    void insert(string w);
 
-    }
+    /**
+     * @brief Retorna un puntero al nodo asociado al bajar por el caracter c, o nulo en caso de no existir
+     * 
+     * @param v puntero al nodo desde donde se dedsciende
+     * @param c caracter al cual buscar
+     */
+    TrieNode* descend(TrieNode* v,char c);
+
+    /**
+     * @brief Retorna el puntero al nodo terminal qu representa mejor autocompletado del subárbol v
+     * 
+     * @param v Subárbol a autocompletar
+     */
+    TrieNode* autocomplete(Trie v);
+
+    /**
+     * @brief  actualiza la prioridad del nodo terminal 𝑣 según la variante y actualiza los nodos en el camino a la raíz.
+     * 
+     * @param v nodo terminal que se actualizará
+     */
+    void update_priority(TrieNode* v);
+
+
+
 };
 #endif
