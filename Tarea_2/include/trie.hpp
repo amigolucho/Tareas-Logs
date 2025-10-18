@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <optional>
 using namespace std; 
 
 
@@ -23,10 +24,10 @@ using namespace std;
  * - best_priority: la prioridad del nodo con mayor prioridad del subárbol
  */
 struct TrieNode {
-    char value;
+    char key;
 
-    TrieNode* parent;
-    std::array<TrieNode*, 27> next;
+    std::optional<TrieNode*> parent;
+    std::array<std::optional<TrieNode*>, 27> next;
     int priority;
     string* str;
     TrieNode* best_terminal;
@@ -39,7 +40,7 @@ struct TrieNode {
  */
 class Trie {
     public:
-        std::vector<TrieNode> nodes;// size cuenta como contador??x|
+        std::vector<std::optional<TrieNode*>> nodes;// size cuenta como contador??x|
 
         int timestamp = 0;
 
@@ -93,4 +94,11 @@ namespace TrieUtils {
      * @param nodo a actualizar en esta iteración
      */
     void update_info(TrieNode* v);
+
+    /**
+     * @brief crea un nodo a partir de un caracter
+     * 
+     * @param w caracter del nodo
+     */
+    TrieNode create_node(char w);
 }
