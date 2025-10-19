@@ -17,6 +17,9 @@ const int sigma_size = 27;
 /**
  * @brief Esctructura que representa un Trie
  * 
+ * - key: caracter de este nodo
+ * - prefijo: prefijo formado hasta este nodo
+ * 
  * - parent: una referencia a su nodo padre (nulo si es la raíz)
  * - next: estructura que mapea caracteres Sigma a hijos
  * - priority: dependiendo del criterio a utilizar, es el tiempo de acceso o la cantidad de accesos a este nodo terminal
@@ -55,15 +58,20 @@ struct TrieNode {
 
 /**
  * @brief Clase que representa un trie
+ * 
+ * - timestamp:
+ * - Sigma: caracteres válidos
+ * - nodes: lista de los nodos del trie (sus punteros)
  */
 class Trie {
     private:
         int timestamp = 0;
         const string Sigma = "abcdefghijklmnopqrstuvwxyz$"; //en particular un string constante es un arreglo de chars (poner e n el readme)
 
-
     public:
         std::vector<TrieNode* > nodes;// size cuenta como contador??x|
+
+        int nodes_count = 0;
         /**
          * @brief Constructor de un Trie
          */

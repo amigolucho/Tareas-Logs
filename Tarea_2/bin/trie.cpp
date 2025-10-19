@@ -8,10 +8,12 @@ void Trie::insert(string w){
     
     for (char i: w){
         int index = Sigma.find(i); 
-        
+
         if (node->next.at(index) == nullptr){
             // Si no existe el nodo se crea
             TrieNode* new_node = new TrieNode();
+            nodes_count++;
+            new_node->key = i;
             new_node->parent = node;
             new_node->prefix = node->prefix + i;
             node->next.at(index) = new_node;
