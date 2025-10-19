@@ -1,50 +1,37 @@
 #include "../include/trie.hpp"
+#include <typeinfo>
 
-Trie::Trie(){
-
-}
 
 void Trie::insert(string w){
-    cout << this->nodes.size() << endl;
-    TrieNode* node = this->nodes.at(0).value();
+    TrieNode* node = this->nodes.at(0);
     w = w + '$'; 
-    cout << "Se leyo bien la raiz" << endl;
-    /*if (node == nullptr){
-            // Crea la raíz en caso de no existir
-            TrieNode* Trie;
-            node = Trie;
-            //node->value = ' ';
-            cout << "Era null asi que hay que crearlo" << endl;
-        }*/
 
-    // nos aseguramos de siempre pasarle la raiz creada
+    TrieNode* hijo;
     
     for (char i: w){
-        cout << "Se inserta el caracter "<< i << endl;
         int index = Sigma.find(i);
-        TrieNode* hijo = node->next.at(index).value();
 
-        cout << "se lee hijo" << endl;
-        if (hijo == nullptr){
-            cout << "El hijo es nulo asi que hay que crearlo" << endl;
+        hijo = node->next.at(index);
+        cout << "Se inserta el caracter "<< i << " con el indice "<< index << endl;
+        
+        if (node->next.at(index) == nullptr){
             // Si no existe el nodo se crea
             TrieNode new_node = TrieUtils::create_node(i);
             new_node.parent = node;
+            new_node.prefix.push_back(i);
+            //cout<< i <<'\n';
             node->next.at(index) = &new_node;
-            
-            hijo = &new_node;
-            this->nodes.push_back(hijo);
+            this->nodes.push_back(node->next.at(index));
         }
-        node = hijo;
+        node = node->next.at(index);
     }
-    
 }
 
 TrieNode* Trie::descend(TrieNode* v,char c){
     int index = Sigma.find(c);
     // Por como se define next, si existe lo devuelve, y si no retorna un null
 
-    return v->next.at(index).value();
+    return v->next.at(index);
 }
 
 TrieNode* Trie::autocomplete(TrieNode* v){
@@ -66,7 +53,7 @@ void Trie::update_priority(TrieNode* v){
 
 namespace TrieUtils {
     void update_info(TrieNode* v){
-        TrieNode* padre = v->parent.value();
+        TrieNode* padre = v->parent;
         if (padre == NULL){
             return ;
         }
@@ -80,12 +67,18 @@ namespace TrieUtils {
     }
     
     TrieNode create_node(char w){
-        TrieNode trie;
-        trie.key = w;
-
-        trie.next.fill(nullptr);
-
-
-        return trie;
+        TrieNode* trie = new TrieNode();  
+        trie->key = w;
+        trie->prefix = "";
+        trie->next.fill(nullptr);
+        trie->parent = nullptr;
+        trie->str = nullptr;
+        trie->best_terminal = nullptr;
+        trie->priority = 0;
+        trie->best_priority = 0;
+        
+        cout << "Se crea el nodo con el caracter " << trie->key << endl;
+        
+        return *trie;
     }
 }

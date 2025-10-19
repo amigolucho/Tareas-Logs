@@ -3,18 +3,18 @@
 
 
 int main(){
-    int * a = nullptr;
     Trie Trie;
-    TrieNode node = TrieUtils::create_node(' ');
-    Trie.nodes.push_back(&node);
-    cout << Trie.nodes.at(0).value()->key << endl;
+    TrieNode root = TrieUtils::create_node(' ');
 
-    Trie.insert("holaaaa");
+    Trie.nodes.push_back(&root);
+
+
+    Trie.insert("hola");
     Trie.insert("holo");
-    Trie.insert("pene");
 
-    cout << Trie.nodes.size() << endl;//deveria ser 10
+    //node2 = Trie.descend(&node, 'h');
 
 
+    cout << Trie.nodes.size() << endl;//deveria ser 15
     return 0;
 };

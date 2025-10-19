@@ -25,9 +25,10 @@ using namespace std;
  */
 struct TrieNode {
     char key;
+    std::string prefix;
 
-    std::optional<TrieNode*> parent;
-    std::array<std::optional<TrieNode*>, 27> next;
+    TrieNode* parent = nullptr;
+    std::array<TrieNode*, 27> next;
     int priority;
     string* str;
     TrieNode* best_terminal;
@@ -40,48 +41,53 @@ struct TrieNode {
  */
 class Trie {
     public:
-        std::vector<std::optional<TrieNode*>> nodes;// size cuenta como contador??x|
-
+        std::vector<TrieNode* > nodes;// size cuenta como contador??x|
         int timestamp = 0;
+        const string Sigma = "abcdefghijklmnopqrstuvwxyz$"; //en particular un string constante es un arreglo de chars (poner e n el readme)
 
-            const string Sigma = "abcdefghijklmnopqrstuvwxyz$"; //en particular un string constante es un arreglo de chars (poner e n el readme)
-            string prefix;
-
-            /**
-             * @brief Constructor de un Trie
-             */
-            Trie();
-
-            /**
-             * @brief inserta una palabra al trie
-             * 
-             * De ser necesario crea nodos
-             * 
-             * @param w palabra a insertar
-             */
-            void insert(string w);
-
-            /**
-             * @brief Retorna un puntero al nodo asociado al bajar por el caracter c, o nulo en caso de no existir
-             * 
-             * @param v puntero al nodo desde donde se dedsciende
-             * @param c caracter al cual buscar
-             */
-            TrieNode* descend(TrieNode* v,char c);
-
-            /**
-             * @brief Retorna el puntero al nodo terminal qu representa mejor autocompletado del subárbol v
-             * 
-             * @param v Subárbol a autocompletar
-             */
-            TrieNode* autocomplete(TrieNode* v);
-
-            /**
-             * @brief  actualiza la prioridad del nodo terminal 𝑣 según la variante y actualiza los nodos en el camino a la raíz.
-             * 
-             * @param v nodo terminal que se actualizará
-             */
-            void update_priority(TrieNode* v);
+        /**
+         * @brief Constructor de un Trie
+         */
+        Trie() {
+        }
+        ~Trie() {
+            for (TrieNode* node : nodes) {
+                if (node != nullptr) {
+                    if (node->str != nullptr) {
+                        delete node->str;
+                    }
+                    delete node;
+                }
+            }
+            nodes.clear();
+        }
+        /**
+         * @brief inserta una palabra al trie
+         * 
+         * De ser necesario crea nodos
+         * 
+         * @param w palabra a insertar
+         */
+        void insert(string w);
+        /**
+         * @brief Retorna un puntero al nodo asociado al bajar por el caracter c, o nulo en caso de no existir
+         * 
+         * @param v puntero al nodo desde donde se dedsciende
+         * @param c caracter al cual buscar
+         */
+        TrieNode* descend(TrieNode* v,char c);
+        /**
+         * @brief Retorna el puntero al nodo terminal qu representa mejor autocompletado del subárbol v
+         * 
+         * @param v Subárbol a autocompletar
+         */
+        TrieNode* autocomplete(TrieNode* v);
+        /**
+         * @brief  actualiza la prioridad del nodo terminal 𝑣 según la variante y actualiza los nodos en el camino a la raíz.
+         * 
+         * @param v nodo terminal que se actualizará
+         */
+        void update_priority(TrieNode* v);
 
 };
 #endif
