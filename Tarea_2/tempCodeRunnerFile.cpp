@@ -5,15 +5,12 @@
 int main(){
     
     Trie Trie;
+    TrieNode root = TrieUtils::create_node(' ');
+
+    Trie.nodes.push_back(&root);
+
 
     Trie.insert("hola");
-    Trie.insert("holo");
-    Trie.insert("pene");
-
-    for(TrieNode* node: Trie.nodes){
-        cout<< node->prefix <<'\n';
-    }
-
 
 
     cout << Trie.nodes.size() << endl;//deveria ser 15

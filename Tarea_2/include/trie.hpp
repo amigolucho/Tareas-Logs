@@ -11,6 +11,8 @@
 #include <optional>
 using namespace std; 
 
+const string sigma = "abcdefghijklmnopqrstuvwxyz$";
+const int sigma_size = 27;
 
 /**
  * @brief Esctructura que representa un Trie
@@ -25,14 +27,29 @@ using namespace std;
  */
 struct TrieNode {
     char key;
-    std::string prefix;
+    string prefix;
 
-    TrieNode* parent = nullptr;
-    std::array<TrieNode*, 27> next;
+    TrieNode* parent;
+    array<TrieNode*, sigma_size> next;
+
     int priority;
     string* str;
     TrieNode* best_terminal;
     int best_priority;
+
+    /** 
+     * @brief Constructor de un nodo de un trie
+     */
+    TrieNode() {
+        key = ' ';
+        prefix = "";
+        parent = nullptr;
+        next.fill(nullptr);  // Todos los hijos en nullptr
+        priority = 0;
+        str = nullptr;       // No es terminal por defecto
+        best_terminal = nullptr;
+        best_priority = 0;
+    }
 };
 
 
@@ -40,15 +57,25 @@ struct TrieNode {
  * @brief Clase que representa un trie
  */
 class Trie {
-    public:
-        std::vector<TrieNode* > nodes;// size cuenta como contador??x|
+    private:
         int timestamp = 0;
         const string Sigma = "abcdefghijklmnopqrstuvwxyz$"; //en particular un string constante es un arreglo de chars (poner e n el readme)
 
+
+    public:
+        std::vector<TrieNode* > nodes;// size cuenta como contador??x|
         /**
          * @brief Constructor de un Trie
          */
         Trie() {
+            TrieNode* root = new TrieNode();
+            root->key = ' ';  // La raíz no tiene carácter asociado
+            root->prefix = "";
+            
+            nodes.push_back(root);
+            timestamp = 0;
+            
+            cout << "Trie inicializado con nodo raíz" << endl;
         }
         ~Trie() {
             for (TrieNode* node : nodes) {
@@ -100,11 +127,4 @@ namespace TrieUtils {
      * @param nodo a actualizar en esta iteración
      */
     void update_info(TrieNode* v);
-
-    /**
-     * @brief crea un nodo a partir de un caracter
-     * 
-     * @param w caracter del nodo
-     */
-    TrieNode create_node(char w);
 }
