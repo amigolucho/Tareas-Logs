@@ -59,31 +59,32 @@ struct TrieNode {
 /**
  * @brief Clase que representa un trie
  * 
+ * - es_frecuencia: indica si el autocompletado es de frecuencia (true), o de de reciente (false)
  * - timestamp:
  * - Sigma: caracteres válidos
  * - nodes: lista de los nodos del trie (sus punteros)
  */
 class Trie {
     private:
+        bool es_frecuencia;
         int timestamp = 0;
         const string Sigma = "abcdefghijklmnopqrstuvwxyz$"; //en particular un string constante es un arreglo de chars (poner e n el readme)
 
     public:
         std::vector<TrieNode* > nodes;// size cuenta como contador??x|
 
-        int nodes_count = 0;
+        int nodes_count = 1;// se cuenta la raíz
         /**
          * @brief Constructor de un Trie
          */
-        Trie() {
+        Trie(bool variante) {
             TrieNode* root = new TrieNode();
             root->key = ' ';  // La raíz no tiene carácter asociado
             root->prefix = "";
             
             nodes.push_back(root);
             timestamp = 0;
-            
-            cout << "Trie inicializado con nodo raíz" << endl;
+            es_frecuencia = variante;
         }
         ~Trie() {
             for (TrieNode* node : nodes) {

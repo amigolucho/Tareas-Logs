@@ -12,7 +12,7 @@ void Trie::insert(string w){
         if (node->next.at(index) == nullptr){
             // Si no existe el nodo se crea
             TrieNode* new_node = new TrieNode();
-            nodes_count++;
+            this->nodes_count++;
             new_node->key = i;
             new_node->parent = node;
             new_node->prefix = node->prefix + i;
@@ -37,18 +37,18 @@ TrieNode* Trie::descend(TrieNode* v,char c){
 }
 
 TrieNode* Trie::autocomplete(TrieNode* v){
-    TrieNode* terminal = v->best_terminal;
+    TrieNode* terminal = v->best_terminal;// va a depender de la variante
     
     return terminal;
 }
 
 void Trie::update_priority(TrieNode* v){
-    // Frecuencia
-    //v->priority += 1;
-    // reciente
-    this->timestamp += 1;
-    v->priority = this->timestamp;
-    
+    if(this->es_frecuencia){// Frecuencia
+        v->priority += 1;
+    }else{// Reciente
+        this->timestamp += 1;
+        v->priority = this->timestamp;
+    }
     TrieUtils::update_info(v);
 }
 
@@ -56,7 +56,7 @@ void Trie::update_priority(TrieNode* v){
 namespace TrieUtils {
     void update_info(TrieNode* v){
         TrieNode* padre = v->parent;
-        if (padre == NULL){
+        if (padre == nullptr){
             return ;
         }
 
