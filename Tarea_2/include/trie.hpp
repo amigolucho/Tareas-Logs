@@ -18,7 +18,7 @@ const int sigma_size = 27;
  * @brief Esctructura que representa un Trie
  * 
  * - key: caracter de este nodo
- * - prefijo: prefijo formado hasta este nodo
+ * - prefix: prefijo formado hasta este nodo
  * 
  * - parent: una referencia a su nodo padre (nulo si es la raíz)
  * - next: estructura que mapea caracteres Sigma a hijos
@@ -60,9 +60,10 @@ struct TrieNode {
  * @brief Clase que representa un trie
  * 
  * - es_frecuencia: indica si el autocompletado es de frecuencia (true), o de de reciente (false)
- * - timestamp:
+ * - timestamp: entero usado para actualizar la prioridad en el caso de autocompletado reciente
  * - Sigma: caracteres válidos
  * - nodes: lista de los nodos del trie (sus punteros)
+ * - nodes_count: cuenta cuantos nodos hay en el trie
  */
 class Trie {
     private:
@@ -74,6 +75,7 @@ class Trie {
         std::vector<TrieNode* > nodes;// size cuenta como contador??x|
 
         int nodes_count = 1;// se cuenta la raíz
+        int total_caracters = 0;
         /**
          * @brief Constructor de un Trie
          */
@@ -97,6 +99,8 @@ class Trie {
             }
             nodes.clear();
         }
+        
+        
         /**
          * @brief inserta una palabra al trie
          * 

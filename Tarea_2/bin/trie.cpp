@@ -1,6 +1,7 @@
 #include "../include/trie.hpp"
 
 void Trie::insert(string w){
+    this->total_caracters += w.size(); // sumamos antes para no contar el $
     TrieNode* node = this->nodes.at(0);// Partimos insertando en la raiz
     w += '$'; 
 
@@ -19,13 +20,14 @@ void Trie::insert(string w){
             node->next.at(index) = new_node;
             this->nodes.push_back(node->next.at(index));
         }
-        node = node->next.at(index);
-
+        
         if(i == '$'){
             node->str = new string(w);
             node->best_terminal = node;
-            node->best_terminal = 0;
+            node->best_priority = 0;
         }
+
+        node = node->next.at(index);
     }
 }
 
