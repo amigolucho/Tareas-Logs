@@ -27,44 +27,66 @@ int main(){
     std::exit(1);
     }
 
-    for(int i = 0; i <= 14; i++){//18
-        Trie Trie(true); // Hay que crearlo desde 0 para poder reiniciar los nodos
+    Trie* ultimo = nullptr;
+
+    for(int i = 0; i <= 18; i++){//18
+        Trie* trie = new Trie(true); // Hay que crearlo desde 0 para poder reiniciar los nodos
         string line;
         int N = pow(2, i);
 
         for(int j = 1; j <= N; j++){
             getline(in, line);
             //cout << line << endl;
-            Trie.insert(line);
+            trie->insert(line);
         }
 
-        resultados << "Inserción para i = 2^"<< i << ". La cantidad de nodos es: " << Trie.nodes_count << ". Cantidad de characaters: " << Trie.total_caracters << endl;
+        resultados << "Inserción para i = 2^"<< i << ". La cantidad de nodos es: " << trie->nodes_count << ". Cantidad de characaters: " << trie->total_caracters << endl;
         in.seekg(0); // se vuelve al inicio
-        if(i==14){
-            std::cout << Trie.nodes.size() << endl;
+        if(i==18){
+            std::cout << trie->nodes.size() << endl;
+            ultimo = trie;
+            std::cout << ultimo->nodes.at(500)->prefix << endl;
         }
     }
+    //std::cout << ultimo->nodes.size() << endl;
+    //std::cout << ultimo->nodes.at(500)->prefix << endl;
     //4.2 Tiempo
     
     //4.3 Análisis de autocompletado
-    int real_char = 0;
+    int total_char = 0;
+    int real_char = 0;// Cantidad de caracteres realis que debería hacer escrito el usuario
+    TrieNode* root = ultimo->nodes.at(0);
     while (wiki >> palabra) { // lee palabra por palabra
-        std::cout << palabra << endl;
+        total_char += palabra.size();
+
+        std::cout <<"Para esta iteracion se deberian haber escrito: "<< total_char
+        << " caracteres, pero gracias al autocompletado, realmente se han escrito: " << real_char << endl;
+        //std::cout << palabra.size() << endl;
+        int descend_count = 0;// cuantas veces se ha descendido
         for(char c : palabra){
-            std::cout << trie->nodes.size()<< endl;
-            std::cout << c << "\n";
-            TrieNode* new_trie = trie->descend(trie->nodes.at(0), palabra.front());
-            std::cout << "pene" << "\n";
-            if(new_trie == nullptr){
+            if(c == '$'){
+                //autocompletado no funciono
                 real_char +=palabra.size();
+                break;
+                //caera en el mismo caso que abajo?
+            }
+            TrieNode* new_node = ultimo->descend(root, palabra.front());
+            descend_count++;
+
+            if(new_node == nullptr){
+                real_char +=palabra.size();
+                break;
             }else{
-                TrieNode* terminal =  trie->autocomplete(new_trie);
+                TrieNode* terminal =  ultimo->autocomplete(new_node);
                 if(*terminal->str == palabra + '$'){
-                    //Sumar llamadas de descent
+                    real_char += descend_count;
+                    descend_count = 0;
+                    ultimo->update_priority(terminal);
+                    break;
                 }
-                trie->update_priority(terminal);
             }
         }
+        descend_count = 0;
     }
 
     wiki.close();

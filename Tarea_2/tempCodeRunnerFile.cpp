@@ -1,1 +1,0 @@
-std::cout << trie.nodes.at(54)->prefix << endl;

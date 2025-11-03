@@ -13,3 +13,7 @@ Inserción para i = 2^11. La cantidad de nodos es: 7776. Cantidad de characaters
 Inserción para i = 2^12. La cantidad de nodos es: 15925. Cantidad de characaters: 37396
 Inserción para i = 2^13. La cantidad de nodos es: 31567. Cantidad de characaters: 72453
 Inserción para i = 2^14. La cantidad de nodos es: 65135. Cantidad de characaters: 151096
+Inserción para i = 2^15. La cantidad de nodos es: 124976. Cantidad de characaters: 287753
+Inserción para i = 2^16. La cantidad de nodos es: 247709. Cantidad de characaters: 593891
+Inserción para i = 2^17. La cantidad de nodos es: 496004. Cantidad de characaters: 1173952
+Inserción para i = 2^18. La cantidad de nodos es: 1021219. Cantidad de characaters: 2412275
