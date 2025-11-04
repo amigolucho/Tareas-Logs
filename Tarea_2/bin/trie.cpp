@@ -4,8 +4,6 @@ void Trie::insert(string w){
     this->total_caracters += w.size(); // sumamos antes para no contar el $
     TrieNode* node = this->nodes.at(0);// Partimos insertando en la raiz
     w += '$'; 
-
-    TrieNode* hijo;
     
     for (char i: w){
         int index = Sigma.find(i); 
@@ -22,7 +20,7 @@ void Trie::insert(string w){
         }
         
         if(i == '$'){
-            node->str = new string(w);
+            node->str = &w;
             node->best_terminal = node;
             node->best_priority = 0;
         }
@@ -59,10 +57,11 @@ namespace TrieUtils {
     void update_info(TrieNode* v){
         TrieNode* padre = v->parent;
         if (padre == nullptr){
+            //es la raíz
             return ;
         }
 
-        if (padre->best_priority < v->priority){
+        if (padre->best_priority <= v->priority){
             // Si es menor hay que actualizar
             padre->best_priority = v->priority;
             padre->best_terminal = v;
