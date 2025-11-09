@@ -140,7 +140,7 @@ int main(){
             }
 
             // 3.1. Guardar la versión Frecuencia
-            ultimo_f = TrieUtils::copyTrie(trie);
+            ultimo_f = trie;
             memoria << i << "," << trie->nodes_count << "," << trie->total_caracters << endl;
             
             words.clear(); 
@@ -154,10 +154,9 @@ int main(){
                 trie_reciente->insert(line_reciente);
             }
             
-            ultimo_r = TrieUtils::copyTrie(trie_reciente); 
-            delete trie_reciente;
-            
-            continue;
+            memoria << i << "," << trie->nodes_count << "," << trie->total_caracters << endl;
+            words.seekg(0); 
+            delete trie;
         }
 
         for(int j = 1; j <= N; j++){
@@ -203,6 +202,7 @@ int main(){
 
     cout << ultimo_f->nodes.at(45)->str << endl;
     cout << ultimo_r->nodes.at(0)->str << endl;
-
+    delete ultimo_f;
+    delete ultimo_r;
     return 0;
 }
