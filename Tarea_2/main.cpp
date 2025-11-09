@@ -119,19 +119,23 @@ int main(){
             int group_counter = 0;
             int iter = 1;
 
-            auto start = high_resolution_clock::now();
-            for(int j = 1; j <= N_MAX; j++){
+            for(int j = 1; j <= N; j++){
                 getline(words, line);
+                
+                auto start = high_resolution_clock::now();
                 trie->insert(line);
                 group_counter++;
+                //cout<< group <<endl;
+                //cout<< group_counter <<endl;
 
                 if(group_counter == group){
                     auto end = high_resolution_clock::now();
-                    auto duration = duration_cast<milliseconds>(end - start);
-                    tiempo << iter << "," << duration.count() << "," << trie->total_caracters << endl;
+                    auto duration = duration_cast<nanoseconds>(end - start);
+
+                    tiempo<<iter<<","<<duration.count()<<","<<trie->total_caracters<<endl;
                     iter++;
-                    start = high_resolution_clock::now(); 
-                    group_counter = 0; // Reiniciar contador de grupo
+
+                    group_counter = 0;
                 }
             }
 
