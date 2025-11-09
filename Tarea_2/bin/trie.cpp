@@ -1,6 +1,7 @@
 #include "../include/trie.hpp"
 
 void Trie::insert(string w){
+    this->contador_palabras += 1; 
     this->total_caracters += w.size(); // sumamos antes para no contar el $
     TrieNode* node = this->nodes.at(0);// Partimos insertando en la raiz
     w += '$'; 

@@ -77,6 +77,7 @@ class Trie {
 
         int nodes_count;// Cuenta cuantos nodos hay en el trie
         int total_caracters;// Cantidad total de caracteres insertados.
+        int contador_palabras;// Cantidad de palabras insertadas
         /**
          * @brief Constructor de un Trie
          */
@@ -87,6 +88,7 @@ class Trie {
             
             nodes_count = 1;
             total_caracters = 0;
+            contador_palabras = 0;
 
             nodes.push_back(root);
             timestamp = 0;
