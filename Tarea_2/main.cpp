@@ -5,16 +5,30 @@
 
 
 int main(){
+    using namespace std::chrono;
+
     std::ifstream wiki("./datasets/wikipedia.txt");
     if (!wiki.is_open()) {
         std::cerr << "Error al abrir el archivo\n";
         return 1;
     }
-    std::ifstream in("./datasets/words.txt");
-    if (!in.is_open()) {
-    std::cerr << "Error al abrir archivo para lectura (4.1): " << "words.txt"
-              << std::endl;
-    std::exit(1);
+    std::ifstream words("./datasets/words.txt");
+    if (!words.is_open()) {
+        std::cerr << "Error al abrir archivo para lectura (4.1): " << "words.txt"
+            << std::endl;
+        std::exit(1);
+    }
+    std::ifstream random("./datasets/random.txt");
+    if (!random.is_open()) {
+        std::cerr << "Error al abrir archivo para lectura (4.1): " << "random.txt"
+            << std::endl;
+        std::exit(1);
+    }
+    std::ifstream randomD("./datasets/random_with_distribution.txt");
+    if (!randomD.is_open()) {
+        std::cerr << "Error al abrir archivo para lectura (4.1): " << "random_with_distribution.txt"
+            << std::endl;
+        std::exit(1);
     }
     
     //4.1 Consumo de memoria y 4.2 Tiempo
@@ -23,7 +37,7 @@ int main(){
         cerr << "Error al abrir el archivo de resultados de memoria" << endl;
         return 1;
     }
-    memoria << "i,nodes,characters,variante"<< endl;
+    memoria << "i,nodes,characters"<< endl;
     //-------------------------------------------------------------------------
     ofstream tiempo("./resultados/resultado_tiempo.csv");
     if (!tiempo) {
@@ -40,8 +54,8 @@ int main(){
     autocompletado << "i,porcentaje,variante"<< endl;
 
 
-    Trie* ultimo_f = nullptr;
-    Trie* ultimo_r = nullptr;
+    Trie* ultimo_f = nullptr;// variante frcuencia
+    Trie* ultimo_r = nullptr;// variante reciente
     std::string palabra;
     int c_pal= 0;
 
@@ -49,18 +63,40 @@ int main(){
         Trie* trie = new Trie(true); // Hay que crearlo desde 0 para poder reiniciar los nodos
         string line;
         int N = pow(2, i);
+        
+        if(i==18){ // medimos tiempo
+            // Guardamos el último trie para trabajar con el después
+            int group = N/16;
+            int group_counter = 0;
+            int iter = 1;
+
+            auto start = high_resolution_clock::now();
+            for(int j = 1; j <= N; j++){
+                getline(words, line);
+                trie->insert(line);
+                group_counter++;
+
+                if(group_counter == group){
+                    auto end = high_resolution_clock::now();
+                    auto duration = duration_cast<milliseconds>(end - start);
+                    tiempo<<iter<<","<<duration.count()<<","<<trie->total_caracters<<endl;
+                    iter++;
+                    auto start = high_resolution_clock::now();// Se parte denuevo a contar tiempo
+                }
+            }
+
+            ultimo_f = TrieUtils::copyTrie(trie);
+            memoria <<i<<","<<trie->nodes_count<<","<<trie->total_caracters<< endl;
+            continue;
+        }
 
         for(int j = 1; j <= N; j++){
-            getline(in, line);
-            trie->insert(line);
-        }
+                getline(words, line);
+                trie->insert(line);
+            }
+
         memoria <<i<<","<<trie->nodes_count<<","<<trie->total_caracters<< endl;
-        in.seekg(0); // se vuelve al inicio
-        if(i==18){
-            // Guardamos el último trie para trabajar con el después
-            ultimo_f = trie;
-            ultimo_f = trie;
-        }
+        words.seekg(0); // se vuelve al inicio
     }
     //4.2 Tiempo
     
@@ -124,8 +160,8 @@ int main(){
     }
     wiki.close();
 
-    cout << ultimo_f->nodes.at(45)->best_priority << endl;
-    cout << ultimo_r->nodes.at(0)->best_priority << endl;
+    cout << ultimo_f->nodes.at(45)->str << endl;
+    cout << ultimo_r->nodes.at(0)->str << endl;
 
     return 0;
 };

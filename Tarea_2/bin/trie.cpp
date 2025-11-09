@@ -69,4 +69,15 @@ namespace TrieUtils {
             update_info(padre);
         }
     }
+
+    Trie* copyTrie(Trie* trie){
+        Trie* new_trie = new Trie(trie->es_frecuencia);
+        new_trie->nodes = trie->nodes;
+        new_trie->nodes_count = trie->nodes_count;
+        new_trie->total_caracters = trie->total_caracters; 
+        new_trie->contador_palabras = trie->contador_palabras;
+        new_trie->timestamp = trie->timestamp;
+
+        return new_trie;
+    }
 }

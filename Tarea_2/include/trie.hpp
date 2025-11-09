@@ -68,11 +68,11 @@ struct TrieNode {
  */
 class Trie {
     private:
-        bool es_frecuencia;// indica si el autocompletado es de frecuencia (true), o de de reciente (false)
-        int timestamp = 0;
         const string Sigma = "abcdefghijklmnopqrstuvwxyz$"; //en particular un string constante es un arreglo de chars (poner e n el readme)
 
     public:
+        int timestamp = 0;
+        bool es_frecuencia;// indica si el autocompletado es de frecuencia (true), o de de reciente (false)
         std::vector<TrieNode* > nodes;// size cuenta como contador??x|
 
         int nodes_count;// Cuenta cuantos nodos hay en el trie
@@ -146,4 +146,6 @@ namespace TrieUtils {
      * @param nodo a actualizar en esta iteración
      */
     void update_info(TrieNode* v);
+
+    Trie* copyTrie(Trie* trie);
 }
