@@ -8,7 +8,7 @@ void Trie::insert(string w){
     
     for (char i: w){
         int index = Sigma.find(i); 
-
+        
         if (node->next.at(index) == nullptr){
             // Si no existe el nodo se crea
             TrieNode* new_node = new TrieNode();
@@ -16,16 +16,15 @@ void Trie::insert(string w){
             new_node->key = i;
             new_node->parent = node;
             new_node->prefix = node->prefix + i;
+            if(i == '$'){
+                new_node->str = new string(w);
+                new_node->best_terminal = node;
+                new_node->best_priority = 0;
+            }
             node->next.at(index) = new_node;
-            this->nodes.push_back(node->next.at(index));
+            this->nodes.push_back(new_node);
         }
         
-        if(i == '$'){
-            node->str = &w;
-            node->best_terminal = node;
-            node->best_priority = 0;
-        }
-
         node = node->next.at(index);
     }
 }
@@ -44,12 +43,19 @@ TrieNode* Trie::autocomplete(TrieNode* v){
 }
 
 void Trie::update_priority(TrieNode* v){
+    if (v == nullptr || v->str == nullptr) {
+            return;  // No es terminal, no hacer nada
+    }
+    //cout<< "Se le actualiza la info al nodo "<<*v->str<<endl;
     if(this->es_frecuencia){// Frecuencia
-        v->priority += 1;
+        v->priority++;
     }else{// Reciente
-        this->timestamp += 1;
+        this->timestamp++;
         v->priority = this->timestamp;
     }
+
+    v->best_terminal = v;
+    v->best_priority = v->priority;
     TrieUtils::update_info(v);
 }
 
@@ -61,11 +67,12 @@ namespace TrieUtils {
             //es la raíz
             return ;
         }
-
-        if (padre->best_priority <= v->priority){
+        
+        if (padre->best_priority <= v->best_priority || padre->best_terminal == nullptr){
             // Si es menor hay que actualizar
-            padre->best_priority = v->priority;
-            padre->best_terminal = v;
+            // Tambien se actualiza si es la primera pasada
+            padre->best_priority = v->best_priority;
+            padre->best_terminal = v->best_terminal;
             update_info(padre);
         }
     }
