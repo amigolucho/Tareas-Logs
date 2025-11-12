@@ -4,7 +4,10 @@
 #include <iostream>
 #include <fstream>
 
-void run_autocomplete_simulation(Trie* trie, std::ifstream& input_file, const std::string& dataset_name, std::ofstream& output_file) {
+using namespace std::chrono;
+
+void run_autocomplete_simulation(Trie* trie, std::ifstream& input_file, const std::string& dataset_name, std::ofstream& output_file, std::ofstream& time_file) {
+    auto start = high_resolution_clock::now();
     TrieNode* root = trie->nodes.at(0);
     std::string palabra;
     std::string variante_label = trie->es_frecuencia ? "Frecuencia" : "Reciente";
@@ -85,6 +88,9 @@ void run_autocomplete_simulation(Trie* trie, std::ifstream& input_file, const st
         //cout<<total_char<<endl;
         output_file << i << "," << porcentaje_escrito << "," << dataset_name << "," << variante_label << std::endl;
     }
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(end - start);
+    time_file<< dataset_name <<","<<duration.count()<<","<<trie->total_caracters<<","<<trie->contador_palabras<<","<<variante_label<<endl;
 }
 
 
@@ -119,6 +125,10 @@ int main(){
     ofstream tiempo("./resultados/resultado_tiempo.csv");
     if (!tiempo) { cerr << "Error al abrir el archivo de resultados de tiempo" << endl; return 1; }
     tiempo << "N/M,t,characters"<< endl;
+
+    ofstream tiempo2("./resultados/resultados_tiempo2.csv");
+    if (!tiempo2) { cerr << "Error al abrir el archivo de resultados de tiempo" << endl; return 1; }
+    tiempo2 << "Dataset,Tiempo de ejecución,Cantidad de caracteres,Cantidad de palabras,Variante"<< endl;
 
     ofstream autocompletado("./resultados/resultado_autocompletado.csv");
     if (!autocompletado) { cerr << "Error al abrir el archivo de resultados de autocompletado" << endl; return 1; }
@@ -188,16 +198,16 @@ int main(){
     }
     
     //wikipedia.txt
-    run_autocomplete_simulation(ultimo_f, wiki, "wikipedia", autocompletado);
-    run_autocomplete_simulation(ultimo_r, wiki, "wikipedia", autocompletado);
+    run_autocomplete_simulation(ultimo_f, wiki, "wikipedia", autocompletado, tiempo2);
+    run_autocomplete_simulation(ultimo_r, wiki, "wikipedia", autocompletado, tiempo2);
 
     //random.txt
-    run_autocomplete_simulation(ultimo_f, random, "random", autocompletado);
-    run_autocomplete_simulation(ultimo_r, random, "random", autocompletado);
+    run_autocomplete_simulation(ultimo_f, random, "random", autocompletado, tiempo2);
+    run_autocomplete_simulation(ultimo_r, random, "random", autocompletado, tiempo2);
 
     //random_with_distribution.txt
-    run_autocomplete_simulation(ultimo_f, randomD, "randomD", autocompletado);
-    run_autocomplete_simulation(ultimo_r, randomD, "randomD", autocompletado);
+    run_autocomplete_simulation(ultimo_f, randomD, "randomD", autocompletado, tiempo2);
+    run_autocomplete_simulation(ultimo_r, randomD, "randomD", autocompletado, tiempo2);
 
 
     wiki.close();
@@ -206,6 +216,7 @@ int main(){
     randomD.close();
     memoria.close();
     tiempo.close();
+    tiempo2.close();
     autocompletado.close();
 
     cout << ultimo_f->nodes.at(0)->best_priority << endl;

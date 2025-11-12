@@ -1,0 +1,7 @@
+Dataset,Tiempo de ejecución (s),Cantidad de caracteres,Cantidad de palabras,Variante
+wikipedia,4417,2412275,262144,Frecuencia
+wikipedia,4468,2412275,262144,Reciente
+random,16243,2412275,262144,Frecuencia
+random,21038,2412275,262144,Reciente
+randomD,12453,2412275,262144,Frecuencia
+randomD,5723,2412275,262144,Reciente
