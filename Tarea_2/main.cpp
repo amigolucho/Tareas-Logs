@@ -6,21 +6,24 @@
 
 using namespace std::chrono;
 
+/**
+ * @brief Realiza la experimentación del autocompletado para un dataset y variante específica
+ */
 void run_autocomplete_simulation(Trie* trie, std::ifstream& input_file, const std::string& dataset_name, std::ofstream& output_file, std::ofstream& time_file) {
     auto start = high_resolution_clock::now();
     TrieNode* root = trie->nodes.at(0);
     std::string palabra;
     std::string variante_label = trie->es_frecuencia ? "Frecuencia" : "Reciente";
-    //cout<<*trie->nodes.at(154289)->str<<endl;
+    int char_count = 0;
+    int c_pal;
 
     for(int i = 0; i <= 22; i++){ 
         int N_palabras_medir = (long)pow(2, i);
-        //cout<< N_palabras_medir<<endl;
         
         input_file.clear(); 
         input_file.seekg(0); 
         
-        long c_pal = 0;      
+        c_pal = 0;      
         long total_char = 0;// Cantidad total de caracteres que el usuario debería haber escrito 
         long real_char = 0;// Cantidad real de caracteres que el usuario escribe
 
@@ -37,44 +40,31 @@ void run_autocomplete_simulation(Trie* trie, std::ifstream& input_file, const st
             for(char c : palabra){
                 //cout<<"letra "<<c<<endl;
                 TrieNode* next_node = trie->descend(current_node, c); 
-                //cout<<"letra despues de descender "<<next_node->key<<endl;
-                //cout<<"con prefijo "<<next_node->prefix<<endl;
                 descend_count++;
 
                 
                 if(next_node == nullptr){
-                    //cout<<"No existe el descenso, se suma toda la palabra "<<palabra<<endl;
                     real_char += palabra.size(); 
                     break;
                 }
 
                 if(c == '$'){
                     // Autocompletado no funcionó
-                    //cout<<"prefijo nodo terminal "<<next_node->prefix<<endl;
                     real_char += palabra.size() - 1;// menos el $
                     trie->update_priority(next_node);
-                    //cout<<"Autocompletado no funciono, se actualiza la info "<<next_node->priority<<endl;
-                    //cout<<"Autocompletado no funciono, se actualiza la info "<<current_node->best_priority<<endl;
-                    //cout<<"Autocompletado no funciono, se actualiza la info "<<current_node->parent->best_priority<<endl;
                     break;
                 }
                 TrieNode* terminal = trie->autocomplete(next_node);
                 bool a = terminal == nullptr;
-                //cout<<"Vemos si existe el nodo terminal "<<a<<endl;
-                //cout<<"mejor prioridad nodo actual "<<current_node->best_priority<<endl;
                 if(a){
                     //Se visita por primera vez, pero no es terminal, el caso terminal se encargará de cambiar esto
                     current_node = next_node; 
                     continue;
                 }
-                //cout<<"el terminal existe y tiene el string "<<*terminal->str<<endl;
 
                 if(*terminal->str == palabra){
                     real_char += descend_count;
                     trie->update_priority(terminal); 
-                    //cout << "Es el terminal "<< palabra <<endl;
-                    //cout << total_char <<endl;
-                    //cout << real_char <<endl;
                     break;
                 }
 
@@ -84,13 +74,12 @@ void run_autocomplete_simulation(Trie* trie, std::ifstream& input_file, const st
         }
 
         float porcentaje_escrito = (float)real_char / total_char;
-        //cout<<real_char<<endl;
-        //cout<<total_char<<endl;
         output_file << i << "," << porcentaje_escrito << "," << dataset_name << "," << variante_label << std::endl;
+        char_count=total_char;
     }
     auto end = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>(end - start);
-    time_file<< dataset_name <<","<<duration.count()<<","<<trie->total_caracters<<","<<trie->contador_palabras<<","<<variante_label<<endl;
+    auto duration = duration_cast<nanoseconds>(end - start);
+    time_file<< dataset_name <<","<<duration.count()<<","<<char_count<<","<<c_pal<<","<<variante_label<<endl;
 }
 
 
@@ -153,7 +142,6 @@ int main(){
                 getline(words, line);
                 
                 auto start = high_resolution_clock::now();
-                //cout<<*trie->nodes.back()->str<<endl;
                 trie->insert(line);
 
                 
@@ -162,8 +150,6 @@ int main(){
                     
                 }
                 group_counter++;
-                //cout<< group <<endl;
-                //cout<< group_counter <<endl;
 
                 if(group_counter == group){
                     auto end = high_resolution_clock::now();
@@ -219,7 +205,7 @@ int main(){
     tiempo2.close();
     autocompletado.close();
 
-    cout << ultimo_f->nodes.at(0)->best_priority << endl;
+    cout << "Se ejecuto la tarea con exito" << endl;
 
     return 0;
 }

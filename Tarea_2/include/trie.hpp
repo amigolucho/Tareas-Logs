@@ -147,5 +147,10 @@ namespace TrieUtils {
      */
     void update_info(TrieNode* v);
 
+    /**
+     * @brief copia un trie en una nueva instancia
+     * 
+     * @param trie trie a copiar
+     */
     Trie* copyTrie(Trie* trie);
 }
